@@ -2,7 +2,6 @@
 « Contact » est un jeu de mots convivial dont les règles sont très simples.
 Il présente l'avantage de ne pas nécessiter de matériel spécifique.
 C'est grâce à mon cousin Quentin Barillot que je l'ai découvert cet été.
-Il est à noter que le nom n'est pas celui du jeu original.
 
 # Cahier des charges
 ## Fonctionnalités principales
@@ -23,7 +22,7 @@ Il est à noter que le nom n'est pas celui du jeu original.
 
 # Règles du jeu
 ## Préparation
-Un joueur qu'on appellera le **gardien** choisit un mot non-conjugué ni décliné 
+Un joueur qu'on appellera le **meneur** choisit un mot non-conjugué ni décliné 
 sans le révéler aux autres joueurs et annonce la première lettre de celui-ci.
 Ce mot doit être un mot valide du dictionnaire français.
 
@@ -36,24 +35,27 @@ Si un autre détective croît avoir deviné le mot auquel fait référence cette
 alors il dit « contact » et après un décompte de trois, les deux joueurs doivent
 simultanément énoncer le mot auquel ils pensent.
 
-* Si les deux mots sont identiques alors la lettre suivante du mot doit être révélée par le gardien.
+* Si les deux mots sont identiques alors la lettre suivante du mot doit être révélée par le meneur.
 Les prochaines définitions devront faire référence à des mots commençant par la suite de lettres ainsi révélées.
 
 * Sinon si les deux mots diffèrent alors aucun indice n'est révélé.
 
-Si le gardien pense avoir deviné le mot auquel fait référence la définition proposée, 
+Si le meneur pense avoir deviné le mot auquel fait référence la définition proposée, 
 il a le droit de s'interposer pour annuler la tentative des détectives en énonçant « pas » suivi du mot en question.
 
 ## Fin de partie
-* Si deux détectives parviennent à énoncer simultanément le mot secret du gardien alors ils ont gagné.
+* Si deux détectives parviennent à énoncer simultanément le mot secret du meneur alors ils ont gagné.
+Le prochain meneur est le détective ayant proposé la définition.
 
-* Si deux détectives énoncent simultanément deux mots différents dont le mot secret alors le gardien a gagné.
+* Si deux détectives énoncent simultanément deux mots différents dont le mot secret alors le meneur a gagné.
+Le prochain meneur reste inchangé.
 
-* Sinon lorsque le décompte du nombre de tentatives tombe à zéro le gardien a gagné.  
+* Sinon lorsque le décompte du nombre de tentatives tombe à zéro le meneur a gagné.
+Le prochain meneur reste inchangé.
 
 ## Nombre de joueurs
 Le jeu est multi-joueurs et nécessite un minimum de trois joueurs :
-un gardien pour faire deviner le mot et deux détectives pour le chercher.
+un meneur pour faire deviner le mot et deux détectives pour le chercher.
 
 Si l'IA est utilisée pour faire deviner le mot, seulement deux joueurs sont nécessaires.
 
