@@ -1,0 +1,24 @@
+{
+  "name": "contact-game",
+  "version": "1.0.0",
+  "description": "« Contact » est un jeu de mots convivial multi-joueurs dont les règles sont très simples.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orthose/contact-game.git"
+  },
+  "author": "Maxime Vincent",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/orthose/contact-game/issues"
+  },
+  "homepage": "https://github.com/orthose/contact-game#readme",
+  "dependencies": {
+    "ws": "^8.13.0"
+  },
+  "type": "module"
+}
