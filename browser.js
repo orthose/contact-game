@@ -35,10 +35,10 @@ ws.onmessage = function(ev) {
             game_input.setAttribute("type", "text");
             main.appendChild(game_input);
 
-            const create_button = document.createElement("button");
-            create_button.innerHTML = "Créer une partie";
-            create_button.onclick = create_game;
-            main.appendChild(create_button);
+            const join_button = document.createElement("button");
+            join_button.innerHTML = "Rejoindre une partie";
+            join_button.onclick = join_game;
+            main.appendChild(join_button);
 
         } else {
             document.getElementById("pseudo_input").style = "border-color: red";
@@ -46,8 +46,8 @@ ws.onmessage = function(ev) {
     }
 
     // Créer une partie
-    else if (data["create_game"]) {
-        if (data["create_game"] === game && data["accepted"]) {
+    else if (data["join_game"]) {
+        if (data["join_game"] === game && data["accepted"]) {
             document.getElementById("game_input").style = "border-color: green";
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
@@ -70,7 +70,7 @@ function unregister() {
     pseudo = "";
 }
 
-function create_game() {
+function join_game() {
     game = document.getElementById("game_input").value;
-    if (game) { send({"create_game": game}) };
+    if (game) { send({"join_game": game}) };
 }

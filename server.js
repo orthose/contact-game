@@ -28,17 +28,41 @@ wss.on("connection", function(ws) {
         // Déconnecter le joueur
         else if (data.hasOwnProperty("unregister")) { ws.close(); }
 
-        // Créer une partie
-        else if (data["create_game"]) {
-            const game = data["create_game"];
-            const isvalid = !games.hasOwnProperty(game) && players[pseudo]["game"] === "";
-            if (isvalid) {
-                console.log("< game", game, "is created >");
-                players[pseudo]["role"] = "leader";
-                players[pseudo]["game"] = game;
-                games[game] = {"secret": "", "letters": 1, "words": new Set(), "players": new Set([pseudo])};
+        // Rejoindre une partie
+        else if (data["join_game"]) {
+            let role = "";
+            const game = data["join_game"];
+            let isvalid = false;
+
+            // Le joueur participe déjà à cette partie
+            if (players[pseudo]["game"] === game) {
+                isvalid = true;
+                role = players[pseudo]["role"];
             }
-            send({"create_game": game, "accepted": isvalid});
+
+            // Le joueur ne peut participer qu'à une partie à la fois
+            // Il doit quitter sa partie actuelle avant d'en rejoindre une autre
+            else if (players[pseudo]["game"] === "") {
+                isvalid = true;
+
+                // Création d'une nouvelle partie
+                if (!games.hasOwnProperty(game)) {
+                    console.log("< game", game, "created by", pseudo, ">");
+                    role = "leader";
+                    games[game] = {"secret": "", "letters": 1, "words": new Set(), "players": new Set([pseudo])};
+                }
+
+                // La partie existe déjà 
+                else {
+                    console.log("<", pseudo, "joined", game, ">");
+                    role = "detective";
+                    games[game]["players"].add(pseudo);
+                }
+
+                players[pseudo]["role"] = role;
+                players[pseudo]["game"] = game;
+            }
+            send({"join_game": game, "role": role, "accepted": isvalid});
         }
         
         // Message incorrect
@@ -52,6 +76,7 @@ wss.on("connection", function(ws) {
         // Si le joueur est leader la partie s'arrête
 
         // Libérer la mémoire
+        // TODO: Si partie en cours supprimer le joueur de la partie
         delete players[pseudo];
     }
 
