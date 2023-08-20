@@ -90,6 +90,21 @@ wss.on("connection", function(ws) {
             // game optionnel
             send({"quit_game": game});
         }
+
+        // Proposer un mot secret
+        else if (data["secret"]) {
+            const secret = data["secret"];
+            const game = players[pseudo]["game"];
+            const role = players[pseudo]["role"];
+            // TODO: Vérifier la validité du mot dans le dictionnaire
+            const isvalid = role === "leader" && game !== "" 
+                && games.hasOwnProperty(game) && games[game]["secret"] === "";
+            if (isvalid) {
+                console.log("<", pseudo, "choosed", secret, "for", game, ">");
+                games[game]["secret"] = secret;
+            }
+            send({"secret": secret, "accepted": isvalid});
+        }
         
         // Message incorrect
         else { send({"accepted": false}); }
