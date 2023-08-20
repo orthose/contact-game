@@ -2,6 +2,7 @@ const ws = new WebSocket("ws://localhost:8080");
 
 let pseudo = "";
 let game = "";
+let role = ""; // detective | leader
 
 const send = (json) => ws.send(JSON.stringify(json));
 
@@ -45,18 +46,29 @@ ws.onmessage = function(ev) {
         }
     }
 
-    // Créer une partie
+    // Rejoindre une partie
     else if (data["join_game"]) {
         if (data["join_game"] === game && data["accepted"]) {
-            document.getElementById("game_input").style = "border-color: green";
+            role = data["role"];
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
 
             // TODO: Formulaire de choix du mot secret
+            //if (role === "leader") {}
+            // TODO: Page du jeu
+            //else if (role === "detective") {}
 
         } else {
             document.getElementById("game_input").style = "border-color: red";
         }
+    }
+
+    // Quitter la partie
+    else if (data.hasOwnProperty("quit_game")) {
+        // On fait confiance au serveur pour le nom de partie
+        game = ""; role = "";
+
+        // TODO: Afficher la page de création de partie
     }
 };
 
@@ -66,11 +78,17 @@ function register() {
 }
 
 function unregister() {
+    // pseudo optionnel
     send({"unregister": pseudo});
     pseudo = "";
 }
 
 function join_game() {
     game = document.getElementById("game_input").value;
-    if (game) { send({"join_game": game}) };
+    if (game) { send({"join_game": game}); }
+}
+
+function quit_game() {
+    // game optionnel
+    if (game) { send({"quit_game": game}); }
 }

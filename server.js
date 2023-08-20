@@ -64,16 +64,50 @@ wss.on("connection", function(ws) {
             }
             send({"join_game": game, "role": role, "accepted": isvalid});
         }
+
+        // Quitter la partie
+        // TODO: Factoriser avec onclose
+        else if (data.hasOwnProperty("quit_game")) {
+            const game = players[pseudo]["game"];
+            const role = players[pseudo]["role"];
+            console.log("<", pseudo, "left", game, ">");
+            if (games.hasOwnProperty(game)) {
+                // Le joueur quitte la liste des participants
+                if (role === "detective") {
+                    games[game]["players"].delete(pseudo);
+                }
+                // TODO: Avertir les autres joueurs si partie en cours
+                // Si le joueur est leader la partie s'arrête
+                //else {}
+            }
+            
+            // Réinitialisation des paramètres du joueur
+            players[pseudo]["game"] = "";
+            players[pseudo]["role"] = "";
+            players[pseudo]["ndef"] = 0;
+            players[pseudo]["def"] = {};
+
+            // game optionnel
+            send({"quit_game": game});
+        }
         
         // Message incorrect
         else { send({"accepted": false}); }
     });
 
     // Déconnexion du joueur
-    ws.onclose = function() { 
+    ws.onclose = function() {
+        const game = players[pseudo]["game"];
+        const role = players[pseudo]["role"];
         console.log("<", pseudo, "is unregistered >");
-        // TODO: Avertir les autres joueurs si partie en cours
-        // Si le joueur est leader la partie s'arrête
+        if (games.hasOwnProperty(game)) {
+            if (role === "detective") {
+                games[game]["players"].delete(pseudo);
+            }
+            // TODO: Avertir les autres joueurs si partie en cours
+            // Si le joueur est leader la partie s'arrête
+            //else {}
+        }
 
         // Libérer la mémoire
         // TODO: Si partie en cours supprimer le joueur de la partie
