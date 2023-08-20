@@ -21,9 +21,12 @@ ws.onmessage = function(ev) {
     const data = JSON.parse(ev.data);
     console.log(data);
 
+    // On fait confiance au serveur pour configurer les variables du joueur
+
     // Enregistrer le joueur
     if (data["register"]) {
-        if (data["register"] === pseudo && data["accepted"]) {
+        if (data["accepted"]) {
+            pseudo = data["register"]
             // Affichage du pseudo
             document.getElementById("pseudo").innerHTML = pseudo;
 
@@ -48,7 +51,8 @@ ws.onmessage = function(ev) {
 
     // Rejoindre une partie
     else if (data["join_game"]) {
-        if (data["join_game"] === game && data["accepted"]) {
+        if (data["accepted"]) {
+            game = data["join_game"];
             role = data["role"];
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
@@ -73,7 +77,7 @@ ws.onmessage = function(ev) {
 };
 
 function register() {
-    pseudo = document.getElementById("pseudo_input").value;
+    const pseudo = document.getElementById("pseudo_input").value;
     if (pseudo) { send({"register": pseudo}); }
 }
 
@@ -84,7 +88,7 @@ function unregister() {
 }
 
 function join_game() {
-    game = document.getElementById("game_input").value;
+    const game = document.getElementById("game_input").value;
     if (game) { send({"join_game": game}); }
 }
 
