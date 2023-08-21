@@ -83,6 +83,10 @@ ws.onmessage = function(ev) {
                 const main = document.querySelector("main")
                 main.innerHTML = "";
 
+                const def_div = document.createElement("div");
+                def_div.id = "definition";
+                main.appendChild(def_div);
+
                 const word_label = document.createElement("label");
                 word_label.setAttribute("for", "word_input");
                 word_label.textContent = "Mot";
@@ -105,7 +109,7 @@ ws.onmessage = function(ev) {
 
                 const def_button = document.createElement("button");
                 def_button.textContent = "Envoyer";
-                //def_button.onclick = definition;
+                def_button.onclick = definition;
                 main.appendChild(def_button);
             }
 
@@ -130,6 +134,10 @@ ws.onmessage = function(ev) {
         const main = document.querySelector("main")
         main.innerHTML = "";
 
+        const def_div = document.createElement("div");
+        def_div.id = "definition";
+        main.appendChild(def_div);
+
         const word_label = document.createElement("label");
         word_label.setAttribute("for", "word_input");
         word_label.textContent = "Mot";
@@ -144,6 +152,19 @@ ws.onmessage = function(ev) {
         contact_button.textContent = "Contrer";
         //contact_button.onclick = contact;
         main.appendChild(contact_button);
+    }
+
+    // Recevoir une définition
+    else if (data["definition"]) {
+        if (data.hasOwnProperty("accepted") && !data["accepted"]) {
+            alert(`La définition pour le mot ${data["word"]} a été refusée.`);
+        } else {
+            const def_p = document.createElement("p");
+            def_p.textContent = data["definition"];
+            def_p.value = {"pseudo": data["pseudo"], "ndef": data["ndef"]}; 
+            //def_p.onclick = contact;
+            document.getElementById("definition").appendChild(def_p);
+        }
     }
 };
 
@@ -171,4 +192,10 @@ function quit_game() {
 function secret() {
     const secret = document.getElementById("secret_input").value;
     if (secret) { send({"secret": secret}); }
+}
+
+function definition() {
+    const word = document.getElementById("word_input").value;
+    const def = document.getElementById("def_input").value;
+    if (def) { send({"definition": def, "word": word}); }
 }

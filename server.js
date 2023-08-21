@@ -1,4 +1,4 @@
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({port: 8080});
 
@@ -20,7 +20,7 @@ wss.on("connection", function(ws) {
             if (isvalid) {
                 pseudo = data["register"];
                 console.log("<", pseudo, "is registered >");
-                players[pseudo] = {"ws": ws, "game": "", "role": "", "ndef": 0, "def": {}}; 
+                players[pseudo] = {"ws": ws, "game": "", "role": ""}; 
             }
             send({"register": data["register"], "accepted": isvalid});
         }
@@ -49,7 +49,7 @@ wss.on("connection", function(ws) {
                 if (!games.hasOwnProperty(game)) {
                     console.log("< game", game, "created by", pseudo, ">");
                     role = "leader";
-                    games[game] = {"secret": "", "letters": 1, "words": new Set(), "players": new Set([pseudo])};
+                    games[game] = {"secret": "", "letters": 1, "words": new Set(), "players": new Set([pseudo]), "ndef": 0, "def": {}};
                 }
 
                 // La partie existe déjà 
@@ -84,11 +84,9 @@ wss.on("connection", function(ws) {
             // Réinitialisation des paramètres du joueur
             players[pseudo]["game"] = "";
             players[pseudo]["role"] = "";
-            players[pseudo]["ndef"] = 0;
-            players[pseudo]["def"] = {};
 
             // game optionnel
-            send({"quit_game": game});
+            send({"quit_game": game, "accepted": true});
         }
 
         // Proposer un mot secret
@@ -103,11 +101,45 @@ wss.on("connection", function(ws) {
                 console.log("<", pseudo, "choosed", secret, "for", game, ">");
                 games[game]["secret"] = secret;
             }
+            // Informe le meneur que le mot est validé
             send({"secret": secret, "accepted": isvalid});
+            // TODO: Diffusion à tous les détectives de la première lettre
+        }
+
+        // Proposer une défintion
+        else if (data["definition"]) {
+            const def = data["definition"];
+            const word = data["word"];
+            const game = players[pseudo]["game"];
+            const role = players[pseudo]["role"];
+            const ndef = games[game]["ndef"];
+            const isvalid = word && role === "detective" && game !== "" && games.hasOwnProperty(game)
+                && word.startsWith(games[game]["secret"].slice(0, games[game]["letters"]))
+                && !games[game]["words"].has(word);
+            // Diffusion à tous les joueurs de la partie
+            if (isvalid) {
+                games[game]["def"][ndef] = word;
+                games[game]["ndef"]++;
+                
+                games[game]["players"].forEach(function(player) {
+                    const pws = players[player]["ws"];
+                    if (pws.readyState === WebSocket.OPEN) {
+                        // Les messages de diffusion n'ont pas de champ "accepted"
+                        pws.send(JSON.stringify({"definition": def, "pseudo": pseudo, "ndef": ndef}));
+                    }
+                });
+            }
+            // Définition refusée
+            else {
+                send({"definition": def, "word": word, "ndef": ndef, "accepted": false});
+            }
         }
         
         // Message incorrect
         else { send({"accepted": false}); }
+
+        console.log(games);
+        console.log(players);
     });
 
     // Déconnexion du joueur
