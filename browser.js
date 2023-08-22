@@ -2,7 +2,7 @@ const ws = new WebSocket("ws://localhost:8080");
 
 let pseudo = "";
 let game = "";
-let role = ""; // detective | leader
+let role = ""; // leader | detective
 
 const send = (json) => ws.send(JSON.stringify(json));
 
@@ -56,6 +56,8 @@ ws.onmessage = function(ev) {
             role = data["role"];
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
+            // Affichage du mot secret ou indice si déjà renseigné
+            document.getElementById("secret").textContent = data["secret"];
 
             // Formulaire de choix du mot secret
             if (role === "leader") {
@@ -125,33 +127,47 @@ ws.onmessage = function(ev) {
         // TODO: Afficher la page de création de partie
     }
 
-    // Proposer un mot secret
+    // Réception du mot secret
     else if (data["secret"]) {
-        const secret = `<span style="color: blue">${data["secret"].slice(0,1)}</span>${data["secret"].slice(1)}`;
-        document.getElementById("secret").innerHTML = secret;
+        // Validation du mot secret du meneur
+        if (data["accepted"]) {
+            const secret = `<span style="color: blue">${data["secret"].slice(0,1)}</span>${data["secret"].slice(1)}`;
+            document.getElementById("secret").innerHTML = secret;
 
-        // Démarrage du jeu
-        const main = document.querySelector("main")
-        main.innerHTML = "";
+            // Démarrage du jeu
+            const main = document.querySelector("main")
+            main.innerHTML = "";
 
-        const def_div = document.createElement("div");
-        def_div.id = "definition";
-        main.appendChild(def_div);
+            const def_div = document.createElement("div");
+            def_div.id = "definition";
+            main.appendChild(def_div);
 
-        const word_label = document.createElement("label");
-        word_label.setAttribute("for", "word_input");
-        word_label.textContent = "Mot";
-        main.appendChild(word_label);
+            const word_label = document.createElement("label");
+            word_label.setAttribute("for", "word_input");
+            word_label.textContent = "Mot";
+            main.appendChild(word_label);
 
-        const word_input = document.createElement("input");
-        word_input.id = "word_input";
-        word_input.setAttribute("type", "text");
-        main.appendChild(word_input);
+            const word_input = document.createElement("input");
+            word_input.id = "word_input";
+            word_input.setAttribute("type", "text");
+            main.appendChild(word_input);
 
-        const contact_button = document.createElement("button");
-        contact_button.textContent = "Contrer";
-        //contact_button.onclick = contact;
-        main.appendChild(contact_button);
+            const contact_button = document.createElement("button");
+            contact_button.textContent = "Contrer";
+            //contact_button.onclick = contact;
+            main.appendChild(contact_button);
+        }
+        // Nouvel indice
+        else if (role === "leader") {
+            const p_secret = document.getElementById("secret");
+            const secret = p_secret.textContent;
+            const letters = data["secret"].length;
+            p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
+
+        }
+        else if (role === "detective") {
+            document.getElementById("secret").textContent = data["secret"];
+        }
     }
 
     // Recevoir une définition

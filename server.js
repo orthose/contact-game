@@ -62,7 +62,8 @@ wss.on("connection", function(ws) {
                 players[pseudo]["role"] = role;
                 players[pseudo]["game"] = game;
             }
-            send({"join_game": game, "role": role, "accepted": isvalid});
+            const secret = games[game]["secret"].slice(0, games[game]["letters"]);
+            send({"join_game": game, "role": role, "secret": secret, "accepted": isvalid});
         }
 
         // Quitter la partie
@@ -100,10 +101,16 @@ wss.on("connection", function(ws) {
             if (isvalid) {
                 console.log("<", pseudo, "choosed", secret, "for", game, ">");
                 games[game]["secret"] = secret;
+                // Diffusion à tous les joueurs de la première lettre
+                games[game]["players"].forEach(function(player) {
+                    const pws = players[player]["ws"];
+                    if (pws.readyState === WebSocket.OPEN) {
+                        pws.send(JSON.stringify({"secret": secret.slice(0,1)}));
+                    }
+                });
             }
             // Informe le meneur que le mot est validé
             send({"secret": secret, "accepted": isvalid});
-            // TODO: Diffusion à tous les détectives de la première lettre
         }
 
         // Proposer une défintion
@@ -138,8 +145,9 @@ wss.on("connection", function(ws) {
         // Message incorrect
         else { send({"accepted": false}); }
 
-        console.log(games);
-        console.log(players);
+        // Debug
+        /*console.log(games);
+        console.log(players);*/
     });
 
     // Déconnexion du joueur
