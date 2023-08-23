@@ -1,8 +1,9 @@
 const ws = new WebSocket("ws://localhost:8080");
 
-let pseudo = "";
-let game = "";
+let pseudo = ""; // Identifiant du joueur
+let game = ""; // Identifiant de la partie
 let role = ""; // leader | detective
+let leader = ""; // Identifiant du meneur
 
 const send = (json) => ws.send(JSON.stringify(json));
 
@@ -53,7 +54,8 @@ ws.onmessage = function(ev) {
     else if (data["join_game"]) {
         if (data["accepted"]) {
             game = data["join_game"];
-            role = data["role"];
+            leader = data["leader"];
+            role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
             // Affichage du mot secret ou indice si déjà renseigné
@@ -175,11 +177,51 @@ ws.onmessage = function(ev) {
         if (data.hasOwnProperty("accepted") && !data["accepted"]) {
             alert(`La définition pour le mot ${data["word"]} a été refusée.`);
         } else {
+            const def_div = document.createElement("div");
+            def_div.id = data["ndef"];
+            def_div.onclick = contact;
+            const author_p = document.createElement("p");
+            author_p.className = "author";
+            author_p.textContent = data["pseudo"];
+            def_div.appendChild(author_p);
+            const searcher_p = document.createElement("p");
+            searcher_p.className = "searcher";
+            def_div.appendChild(searcher_p);
+            const word_p = document.createElement("p");
+            word_p.className = "word";
+            def_div.appendChild(word_p);
+            const contact_p = document.createElement("p");
+            contact_p.className = "contact";
+            def_div.appendChild(contact_p);
             const def_p = document.createElement("p");
+            def_p.className = "definition";
             def_p.textContent = data["definition"];
-            def_p.value = {"pseudo": data["pseudo"], "ndef": data["ndef"]}; 
-            //def_p.onclick = contact;
-            document.getElementById("definition").appendChild(def_p);
+            def_div.appendChild(def_p);
+            document.getElementById("definition").appendChild(def_div);
+        }
+    }
+
+    // Recevoir un contact
+    else if (data["contact"]) {
+        const word = data["word"];
+        const contact = data["contact"];
+        const def_div = document.querySelector(`#definition div[id="${data["ndef"]}"]`);
+        def_div.querySelector("p.searcher").textContent = data["pseudo"];
+        def_div.querySelector("p.word").textContent = word;
+        def_div.querySelector("p.contact").textContent = contact;
+        if (word === contact) {
+            // Contre du meneur
+            if (data["pseudo"] === leader) {
+                def_div.style = "border-color: blue";
+            }
+            // Contact réussi 
+            else {
+                def_div.style = "border-color: green";
+            }
+        }
+        // Contact ou contre échoué 
+        else {
+            def_div.style = "border-color: red";
         }
     }
 };
@@ -213,5 +255,10 @@ function secret() {
 function definition() {
     const word = document.getElementById("word_input").value;
     const def = document.getElementById("def_input").value;
-    if (def) { send({"definition": def, "word": word}); }
+    if (word && def) { send({"definition": def, "word": word}); }
+}
+
+function contact() {
+    const word = document.getElementById("word_input").value;
+    if (word) { send({"contact": word, "ndef": this.id}); }
 }

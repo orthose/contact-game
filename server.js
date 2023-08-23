@@ -19,7 +19,7 @@ wss.on("connection", function(ws) {
             const isvalid = (pseudo === "" && !players.hasOwnProperty(data["register"])) || pseudo === data["register"];
             if (isvalid) {
                 pseudo = data["register"];
-                console.log("<", pseudo, "is registered >");
+                console.log("<", pseudo, "registered >");
                 players[pseudo] = {"ws": ws, "game": "", "role": ""}; 
             }
             send({"register": data["register"], "accepted": isvalid});
@@ -49,7 +49,8 @@ wss.on("connection", function(ws) {
                 if (!games.hasOwnProperty(game)) {
                     console.log("< game", game, "created by", pseudo, ">");
                     role = "leader";
-                    games[game] = {"secret": "", "letters": 1, "words": new Set(), "players": new Set([pseudo]), "ndef": 0, "def": {}};
+                    games[game] = {"secret": "", "letters": 1, "words": new Set(), 
+                        "leader": pseudo, "players": new Set([pseudo]), "ndef": 0, "def": {}};
                 }
 
                 // La partie existe déjà 
@@ -58,12 +59,12 @@ wss.on("connection", function(ws) {
                     role = "detective";
                     games[game]["players"].add(pseudo);
                 }
-
                 players[pseudo]["role"] = role;
                 players[pseudo]["game"] = game;
             }
             const secret = games[game]["secret"].slice(0, games[game]["letters"]);
-            send({"join_game": game, "role": role, "secret": secret, "accepted": isvalid});
+            const leader = games[game]["leader"];
+            send({"join_game": game, "secret": secret, "leader": leader, "accepted": isvalid});
         }
 
         // Quitter la partie
@@ -125,6 +126,7 @@ wss.on("connection", function(ws) {
                 && !games[game]["words"].has(word);
             // Diffusion à tous les joueurs de la partie
             if (isvalid) {
+                console.log("< definition", ndef, "for", word, ">");
                 games[game]["def"][ndef] = word;
                 games[game]["ndef"]++;
                 
@@ -141,8 +143,63 @@ wss.on("connection", function(ws) {
                 send({"definition": def, "word": word, "ndef": ndef, "accepted": false});
             }
         }
+
+        // Résoudre un contact
+        else if (data["contact"]) {
+            const game = players[pseudo]["game"];
+            const role = players[pseudo]["role"];
+            let isvalid = data.hasOwnProperty("ndef") && games[game]["def"].hasOwnProperty(data["ndef"]);
+                //&& games[game]["definition"][data["ndef"]] === data["contact"];
+            
+            if (isvalid) {
+                const ndef = data["ndef"];
+                const accepted = games[game]["def"][ndef] === data["contact"];
+                const word = games[game]["def"][ndef];
+
+                // En cas de contre du meneur il faut qu'il soit réussi
+                if (!(role === "leader" && !accepted)) {
+                    console.log("< remove definition", ndef, ">");
+                    // Ajout aux mots consommés
+                    games[game]["words"].add(word);
+                    games[game]["words"].add(games[game]["def"][ndef]);
+                    // Suppression de la définition
+                    delete games[game]["def"][ndef];
+                }
+
+                // Diffusion du contact à tous les joueurs qu'il soit réussi ou non
+                // Variante: ne diffuser que si accepted et retirer "word", "accepted"
+                games[game]["players"].forEach(function(player) {
+                    const pws = players[player]["ws"];
+                    if (pws.readyState === WebSocket.OPEN) {
+                        // Si c'est le pseudo du leader c'est un contre sinon c'est un vrai contact
+                        // TODO: Donner le pseudo du leader dans join_game et l'ajouter à game
+                        pws.send(JSON.stringify({"contact": data["contact"], "word": word, "pseudo": pseudo, "ndef": ndef}));
+                    }
+                });
+
+                if (role === "detective") {
+                    // Diffusion de l'indice
+                    if (accepted) {
+                        const letters = ++games[game]["letters"];
+                        const secret = games[game]["secret"].slice(0,letters);
+                        console.log("< hint found", secret, ">");
+                        games[game]["players"].forEach(function(player) {
+                            const pws = players[player]["ws"];
+                            if (pws.readyState === WebSocket.OPEN) {
+                                pws.send(JSON.stringify({"secret": secret}));
+                            }
+                        });
+                    }
+                    // Echec du contact
+                    //else { games[game]["try"]--; }
+                }
+
+                // TODO: Gestion de fin de partie try === 0 || games[game]["letters"] === games[game]["secret"].length
+            }
+        }
         
         // Message incorrect
+        // TODO: Cela n'apporte rien supprimer ? On ignore les messages malformés.
         else { send({"accepted": false}); }
 
         // Debug
@@ -154,7 +211,7 @@ wss.on("connection", function(ws) {
     ws.onclose = function() {
         const game = players[pseudo]["game"];
         const role = players[pseudo]["role"];
-        console.log("<", pseudo, "is unregistered >");
+        console.log("<", pseudo, "unregistered >");
         if (games.hasOwnProperty(game)) {
             if (role === "detective") {
                 games[game]["players"].delete(pseudo);
