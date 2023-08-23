@@ -22,7 +22,7 @@ ws.onmessage = function(ev) {
     const data = JSON.parse(ev.data);
     console.log(data);
 
-    // On fait confiance au serveur pour configurer les variables du joueur
+    // On fait confiance au serveur pour tous les messages reçus
 
     // Enregistrer le joueur
     if (data["register"]) {
@@ -124,7 +124,7 @@ ws.onmessage = function(ev) {
 
     // Quitter la partie
     else if (data.hasOwnProperty("quit_game")) {
-        game = ""; role = "";
+        game = ""; role = ""; leader = "";
 
         // TODO: Afficher la page de création de partie
     }
