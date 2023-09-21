@@ -1,35 +1,68 @@
+import { players, games } from "./private/data.js";
+import { requests, onclose } from "./private/requests.js";
 import { WebSocket, WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({port: 8080});
 
-const players = {};
-const games = {};
+/*const players = {};
+const games = {};*/
+
+// Scope global du serveur
+const sg = {players: players, games: games}
 
 wss.on("connection", function(ws) {
-    let pseudo = ""; // Pseudo du joueur courant
+    //let pseudo = ""; // Pseudo du joueur courant
+    // Scope local du joueur
+    const sl = {pseudo: "", ws: ws};
 
+    // Envoi d'un message au joueur courant
     const send = (json) => ws.send(JSON.stringify(json));
 
-    ws.on("message", function(data) {
-        data = JSON.parse(data);
-        console.log(data);
+    // Diffusion d'un message à tous les joueurs de la partie
+    function broadcast(json) {
+        const game = sg.players[sl.pseudo]["game"];
+        Object.keys(sg.games[game]["players"]).forEach(function(player) {
+            const pws = sg.players[player]["ws"];
+            if (pws.readyState === WebSocket.OPEN) {
+                pws.send(JSON.stringify(json));
+            }
+        });
+    }
 
-        function getRole() {
-            const game = players[pseudo]["game"];
-            return  game ? (games[game]["leader"] === pseudo ? "leader" : "detective") : "";
+    ws.on("message", function(data) {
+        const rq = JSON.parse(data);
+        console.log(rq);
+
+        // Le type de requête est-il valide ?
+        if (rq.hasOwnProperty("type") && requests.hasOwnProperty(rq["type"])) {
+            const request = requests[rq["type"]];
+            // La syntaxe de la requête est-elle correcte ?
+            if (request["syntax"](rq)) {
+                // Traitement de la requête
+                const rp = request["callback"](rq, sg, sl);
+                if (rp.hasOwnProperty("send")) { send(rp["send"]); }
+                if (rp.hasOwnProperty("broadcast")) { broadcast(rp["broadcast"]); }
+            }
         }
+
+        // On ignore les messages incorrects
+        
         /*let game = players[pseudo]["game"];
-        let role = game ? (games[game]["leader"] === pseudo ? "leader" : "detective") : "";*/
+        let role = game ? (games[game]["leader"] === pseudo ? "leader" : "detective") : "";
 
         // Enregistrer le joueur
         if (data["register"]) {
-            const isvalid = (pseudo === "" && !players.hasOwnProperty(data["register"])) || pseudo === data["register"];
+            /*const isvalid = (pseudo === "" && !players.hasOwnProperty(data["register"])) || pseudo === data["register"];
             if (isvalid) {
                 pseudo = data["register"];
                 console.log("<", pseudo, "registered >");
                 players[pseudo] = {"ws": ws, "game": ""}; 
             }
             send({"register": data["register"], "accepted": isvalid});
+            const res = register(data, globalState, localState);
+            if (res !== undefined) { send(res["send"]); }
+            console.log(globalState);
+            console.log(localState);
         }
         
         // Déconnecter le joueur
@@ -204,28 +237,12 @@ wss.on("connection", function(ws) {
         else { send({"accepted": false}); }
 
         // Debug
-        /*console.log(games);
-        console.log(players);*/
+        /*console.log(sg.games);
+        console.log(sg.players);*/
     });
 
     // Déconnexion du joueur
-    ws.onclose = function() {
-        const game = players[pseudo]["game"];
-        const role = getRole();
-        console.log("<", pseudo, "unregistered >");
-        if (games.hasOwnProperty(game)) {
-            if (role === "detective") {
-                games[game]["players"].delete(pseudo);
-            }
-            // TODO: Avertir les autres joueurs si partie en cours
-            // Si le joueur est leader la partie s'arrête
-            //else {}
-        }
-
-        // Libérer la mémoire
-        // TODO: Si partie en cours supprimer le joueur de la partie
-        delete players[pseudo];
-    }
+    ws.onclose = function() { onclose(sg, sl); }
 
     //ws.on('error', console.error);
 });

@@ -25,9 +25,9 @@ ws.onmessage = function(ev) {
     // On fait confiance au serveur pour tous les messages reçus
 
     // Enregistrer le joueur
-    if (data["register"]) {
+    if ("register" === data["type"]) {
         if (data["accepted"]) {
-            pseudo = data["register"]
+            pseudo = data["pseudo"]
             // Affichage du pseudo
             document.getElementById("pseudo").innerHTML = pseudo;
 
@@ -42,7 +42,7 @@ ws.onmessage = function(ev) {
 
             const join_button = document.createElement("button");
             join_button.innerHTML = "Rejoindre une partie";
-            join_button.onclick = join_game;
+            join_button.onclick = joinGame;
             main.appendChild(join_button);
 
         } else {
@@ -51,9 +51,9 @@ ws.onmessage = function(ev) {
     }
 
     // Rejoindre une partie
-    else if (data["join_game"]) {
+    else if ("joinGame" === data["type"]) {
         if (data["accepted"]) {
-            game = data["join_game"];
+            game = data["game"];
             leader = data["leader"];
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
@@ -123,14 +123,14 @@ ws.onmessage = function(ev) {
     }
 
     // Quitter la partie
-    else if (data.hasOwnProperty("quit_game")) {
+    else if ("quitGame" === data["type"]) {
         game = ""; role = ""; leader = "";
 
         // TODO: Afficher la page de création de partie
     }
 
     // Réception du mot secret
-    else if (data["secret"]) {
+    else if ("secret" === data["type"]) {
         // Validation du mot secret du meneur
         if (data["accepted"]) {
             const secret = `<span style="color: blue">${data["secret"].slice(0,1)}</span>${data["secret"].slice(1)}`;
@@ -173,7 +173,7 @@ ws.onmessage = function(ev) {
     }
 
     // Recevoir une définition
-    else if (data["definition"]) {
+    else if ("definition" === data["type"]) {
         if (data.hasOwnProperty("accepted") && !data["accepted"]) {
             alert(`La définition pour le mot ${data["word"]} a été refusée.`);
         } else {
@@ -195,14 +195,14 @@ ws.onmessage = function(ev) {
             def_div.appendChild(contact_p);
             const def_p = document.createElement("p");
             def_p.className = "definition";
-            def_p.textContent = data["definition"];
+            def_p.textContent = data["def"];
             def_div.appendChild(def_p);
             document.getElementById("definition").appendChild(def_div);
         }
     }
 
     // Recevoir un contact
-    else if (data["contact"]) {
+    else if ("contact" === data["type"]) {
         const word = data["word"];
         const contact = data["contact"];
         const def_div = document.querySelector(`#definition div[id="${data["ndef"]}"]`);
@@ -228,37 +228,35 @@ ws.onmessage = function(ev) {
 
 function register() {
     const pseudo = document.getElementById("pseudo_input").value;
-    if (pseudo) { send({"register": pseudo}); }
+    if (pseudo) { send({"type": "register", "pseudo": pseudo}); }
 }
 
 function unregister() {
-    // pseudo optionnel
-    send({"unregister": pseudo});
+    send({"type": "unregister"});
     pseudo = "";
 }
 
-function join_game() {
+function joinGame() {
     const game = document.getElementById("game_input").value;
-    if (game) { send({"join_game": game}); }
+    if (game) { send({"type": "joinGame", "game": game}); }
 }
 
-function quit_game() {
-    // game optionnel
-    if (game) { send({"quit_game": game}); }
+function quitGame() {
+    if (game) { send({"type": "quitGame"}); }
 }
 
 function secret() {
     const secret = document.getElementById("secret_input").value;
-    if (secret) { send({"secret": secret}); }
+    if (secret) { send({"type": "secret", "secret": secret}); }
 }
 
 function definition() {
     const word = document.getElementById("word_input").value;
     const def = document.getElementById("def_input").value;
-    if (word && def) { send({"definition": def, "word": word}); }
+    if (word && def) { send({"type": "definition", "def": def, "word": word}); }
 }
 
 function contact() {
     const word = document.getElementById("word_input").value;
-    if (word) { send({"contact": word, "ndef": this.id}); }
+    if (word) { send({"type": "contact", "word": word, "ndef": parseInt(this.id)}); }
 }
