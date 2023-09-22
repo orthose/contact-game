@@ -1,0 +1,15 @@
+div {
+    border: 1px solid black;
+}
+
+.success-leader {
+    border-color: blue;
+}
+
+.success {
+    border-color: green;
+}
+
+.fail {
+    border-color: red;
+}

@@ -18,7 +18,7 @@ wss.on("connection", function(ws) {
     // Envoi d'un message au joueur courant
     const send = (json) => ws.send(JSON.stringify(json));
 
-    // Diffusion d'un message à tous les joueurs de la partie
+    // Diffusion d'un message à tous les joueurs de la partie courante
     function broadcast(json) {
         const game = sg.players[sl.pseudo]["game"];
         Object.keys(sg.games[game]["players"]).forEach(function(player) {
@@ -40,8 +40,13 @@ wss.on("connection", function(ws) {
             if (request["syntax"](rq)) {
                 // Traitement de la requête
                 const rp = request["callback"](rq, sg, sl);
-                if (rp.hasOwnProperty("send")) { send(rp["send"]); }
-                if (rp.hasOwnProperty("broadcast")) { broadcast(rp["broadcast"]); }
+                // Gestion des suites de messages
+                function batch(fsend, msg) {
+                    if (!Array.isArray(msg)) { msg = [msg]; }
+                    msg.forEach((m) => fsend(m));
+                }
+                if (rp.hasOwnProperty("send")) { batch(send, rp["send"]); }
+                if (rp.hasOwnProperty("broadcast")) { batch(broadcast, rp["broadcast"]); }
             }
         }
 

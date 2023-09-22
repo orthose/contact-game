@@ -101,19 +101,19 @@ export function quitGame(rq, sg, sl) {
 
 // Proposer un mot secret
 export function secret(rq, sg, sl) {
-    const secret = rq["secret"];
+    const secret = rq["word"];
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     // TODO: Vérifier la validité du mot dans le dictionnaire
     const isvalid = role === "leader" && game !== "" 
         && sg.games.hasOwnProperty(game) && sg.games[game]["secret"] === "";
     // Informe le meneur si le mot est validé ou non
-    const res = {"send": {"type": "secret", "secret": secret, "accepted": isvalid}};
+    const res = {"send": {"type": "secret", "word": secret, "accepted": isvalid}};
     if (isvalid) {
         console.log("<", sl.pseudo, "choosed", secret, "for", game, ">");
         sg.games[game]["secret"] = secret;
         // Diffusion à tous les joueurs de la première lettre
-        res["broadcast"] = {"type": "secret", "secret": secret.slice(0,1)};
+        res["broadcast"] = {"type": "secret", "word": secret.slice(0,1)};
     }
     return res;
 }
@@ -125,11 +125,13 @@ export function definition(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     const ndef = sg.games[game]["ndef"];
+    // TODO: Vérifier que la définition ne contient pas le mot proposé ou une racine
     const isvalid = word && role === "detective" && game !== "" && sg.games.hasOwnProperty(game)
         && word.startsWith(sg.games[game]["secret"].slice(0, sg.games[game]["letters"]))
         && !sg.games[game]["words"].has(word);
     if (isvalid) {
         console.log("< definition", ndef, "for", word, ">");
+        sg.games[game]["players"][sl.pseudo].add(ndef);
         sg.games[game]["def"][ndef] = word;
         sg.games[game]["ndef"]++;
         // Diffusion à tous les joueurs de la partie
@@ -142,46 +144,68 @@ export function definition(rq, sg, sl) {
 
 // Résoudre un contact
 export function contact(rq, sg, sl) {
+    const res = [];
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
-    let isvalid = sg.games[game]["def"].hasOwnProperty(rq["ndef"]);
-        //&& games[game]["definition"][rq["ndef"]] === rq["contact"];
+    const ndef = rq["ndef"];
+    let isvalid = (
+        // Le numéro de définition existe-t-il ? 
+        sg.games[game]["def"].hasOwnProperty(ndef)
+        // Le joueur n'a pas pas proposé cette définition ?
+        && !sg.games[game]["players"][sl.pseudo].has(ndef)
+    );
     
     if (isvalid) {
-        const ndef = rq["ndef"];
-        const accepted = sg.games[game]["def"][ndef] === rq["word"];
-        const word = sg.games[game]["def"][ndef];
+        // Les mots correspondent-ils ?
+        isvalid = sg.games[game]["def"][ndef] === rq["word"];
+        let word = sg.games[game]["def"][ndef];
+        // Définitions expirées si mot déjà consommé
+        const expired = [];
 
-        // En cas de contre du meneur il faut qu'il soit réussi
-        if (!(role === "leader" && !accepted)) {
+        // Si le contact est réussi ou non on change l'état de la partie
+        // En cas de contre du meneur il faut qu'il soit réussi 
+        if (!(role === "leader" && !isvalid)) {
             console.log("< remove definition", ndef, ">");
             // Ajout aux mots consommés
             sg.games[game]["words"].add(word);
             sg.games[game]["words"].add(sg.games[game]["def"][ndef]);
             // Suppression de la définition
             delete sg.games[game]["def"][ndef];
+            // Recherche et suppression des définitions correspondant au mot consommé
+            Object.entries(sg.games[game]["def"]).forEach(([n, w]) => {
+                if (w === word) { 
+                    expired.push(n);
+                    delete sg.games[game]["def"][n];
+                }
+            });
         }
+        // En cas de contre du meneur raté le mot de la définition n'est pas révélé
+        else if (role === "leader" && !isvalid) { word = ""; }
 
         // Diffusion du contact à tous les joueurs qu'il soit réussi ou non
         // Si c'est le pseudo du leader c'est un contre sinon c'est un vrai contact
         // Variante: ne diffuser que si accepted et retirer "word", "accepted"
-        const res = {"type": "contact", "word1": word, "word2": rq["word"], "pseudo": sl.pseudo, "ndef": ndef, "accepted": accepted};
+        res.push({"type": "contact", "word1": word, "word2": rq["word"], "pseudo": sl.pseudo, "ndef": ndef, 
+        "expired": expired, "accepted": isvalid});
 
         if (role === "detective") {
             // Diffusion de l'indice
-            if (accepted) {
+            if (isvalid) {
                 const letters = ++sg.games[game]["letters"];
                 const secret = sg.games[game]["secret"].slice(0,letters);
+                // Suppression de toutes les définitions
+                sg.games[game]["def"] = {};
+                // TODO: Vider les numéros de définition dans "players" et faire repartir ndef = 0 ?
                 console.log("< hint found", secret, ">");
-                res["secret"] = secret;
+                res.push({"type": "secret", "word": secret});
             }
             // Echec du contact
             //else { games[game]["try"]--; }
-        }
-        return {"broadcast": res};
+        }    
 
         // TODO: Gestion de fin de partie try === 0 || games[game]["letters"] === games[game]["secret"].length
     }
+    return {"broadcast": res};
 }
 
 // Déconnexion du joueur
@@ -222,7 +246,7 @@ export const requests = {
         "callback": quitGame
     },
     "secret": {
-        "syntax": (rq) => rq["secret"],
+        "syntax": (rq) => rq["word"],
         "callback": secret
     },
     "definition": {

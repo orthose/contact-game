@@ -19,7 +19,7 @@ ws.onclose = function(ev) {
 
 // Réception des messages du serveur
 ws.onmessage = function(ev) {
-    const data = JSON.parse(ev.data);
+    let data = JSON.parse(ev.data);
     console.log(data);
 
     // On fait confiance au serveur pour tous les messages reçus
@@ -133,7 +133,7 @@ ws.onmessage = function(ev) {
     else if ("secret" === data["type"]) {
         // Validation du mot secret du meneur
         if (data["accepted"]) {
-            const secret = `<span style="color: blue">${data["secret"].slice(0,1)}</span>${data["secret"].slice(1)}`;
+            const secret = `<span style="color: blue">${data["word"].slice(0,1)}</span>${data["word"].slice(1)}`;
             document.getElementById("secret").innerHTML = secret;
 
             // Démarrage du jeu
@@ -160,15 +160,22 @@ ws.onmessage = function(ev) {
             main.appendChild(contact_button);
         }
         // Nouvel indice
-        else if (role === "leader") {
-            const p_secret = document.getElementById("secret");
-            const secret = p_secret.textContent;
-            const letters = data["secret"].length;
-            p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
+        else {
+            // Suppression de toutes les définitions non-jouées
+            document.querySelectorAll("div#definition div").forEach(
+                (div) => { if (!["success-leader", "success", "fail"].includes(div.className)) { div.remove(); } }
+            );
 
-        }
-        else if (role === "detective") {
-            document.getElementById("secret").textContent = data["secret"];
+            if (role === "leader") {
+                const p_secret = document.getElementById("secret");
+                const secret = p_secret.textContent;
+                const letters = data["word"].length;
+                p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
+
+            }
+            else if (role === "detective") {
+                document.getElementById("secret").textContent = data["word"];
+            }
         }
     }
 
@@ -203,26 +210,28 @@ ws.onmessage = function(ev) {
 
     // Recevoir un contact
     else if ("contact" === data["type"]) {
-        const word = data["word"];
-        const contact = data["contact"];
+        const word1 = data["word1"];
+        const word2 = data["word2"];
         const def_div = document.querySelector(`#definition div[id="${data["ndef"]}"]`);
         def_div.querySelector("p.searcher").textContent = data["pseudo"];
-        def_div.querySelector("p.word").textContent = word;
-        def_div.querySelector("p.contact").textContent = contact;
-        if (word === contact) {
+        def_div.querySelector("p.word").textContent = word1;
+        def_div.querySelector("p.contact").textContent = word2;
+        if (data["accepted"]) {
             // Contre du meneur
             if (data["pseudo"] === leader) {
-                def_div.style = "border-color: blue";
+                def_div.className = "success-leader";
             }
             // Contact réussi 
             else {
-                def_div.style = "border-color: green";
+                def_div.className = "success";
             }
         }
         // Contact ou contre échoué 
         else {
-            def_div.style = "border-color: red";
+            def_div.className = "fail";
         }
+        // Suppression des définitions expirées
+        data["expired"].forEach((n) => { document.getElementById(n).remove(); });
     }
 };
 
@@ -247,7 +256,7 @@ function quitGame() {
 
 function secret() {
     const secret = document.getElementById("secret_input").value;
-    if (secret) { send({"type": "secret", "secret": secret}); }
+    if (secret) { send({"type": "secret", "word": secret}); }
 }
 
 function definition() {
