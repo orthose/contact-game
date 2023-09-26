@@ -60,7 +60,7 @@ export function joinGame(rq, sg, sl) {
         if (!sg.games.hasOwnProperty(game)) {
             console.log("< game", game, "created by", sl.pseudo, ">");
             sg.games[game] = {
-                "secret": "", "letters": 1, "words": new Set(), "ndef": 0, "def": {},
+                "secret": "", "letters": 1, "words": new Set(), "ntry": 5, "ndef": 0, "def": {},
                 "leader": sl.pseudo, "players": {[sl.pseudo]: new Set()}
             };
         }
@@ -72,9 +72,10 @@ export function joinGame(rq, sg, sl) {
         }
         sg.players[sl.pseudo]["game"] = game;
     }
+    const ntry = sg.games[game]["ntry"];
     const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
     const leader = sg.games[game]["leader"];
-    return {"send": {"type": "joinGame", "game": game, "secret": secret, "leader": leader, "accepted": isvalid}};
+    return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, "accepted": isvalid}};
 }
 
 // Quitter la partie en cours
@@ -85,7 +86,7 @@ export function quitGame(rq, sg, sl) {
     if (sg.games.hasOwnProperty(game)) {
         // Le joueur quitte la liste des participants
         if (role === "detective") {
-            sg.games[game]["players"].delete(sl.pseudo);
+            delete sg.games[game]["players"][sl.pseudo];
         }
         // TODO: Avertir les autres joueurs si partie en cours
         // Si le joueur est leader la partie s'arrête
@@ -95,7 +96,6 @@ export function quitGame(rq, sg, sl) {
     // Réinitialisation des paramètres du joueur
     sg.players[sl.pseudo]["game"] = "";
 
-    // game optionnel
     return {"send": {"type": "quitGame", "accepted": true}};
 }
 
@@ -153,12 +153,15 @@ export function contact(rq, sg, sl) {
         sg.games[game]["def"].hasOwnProperty(ndef)
         // Le joueur n'a pas pas proposé cette définition ?
         && !sg.games[game]["players"][sl.pseudo].has(ndef)
+        // Le meneur ne peut pas proposer le mot secret pour contrer
+        && (role !== "leader" || sg.games[game]["def"][ndef] !== sg.games[game]["secret"])
     );
     
     if (isvalid) {
         // Les mots correspondent-ils ?
         isvalid = sg.games[game]["def"][ndef] === rq["word"];
         let word = sg.games[game]["def"][ndef];
+        let winner = "";
         // Définitions expirées si mot déjà consommé
         const expired = [];
 
@@ -174,19 +177,25 @@ export function contact(rq, sg, sl) {
             // Recherche et suppression des définitions correspondant au mot consommé
             Object.entries(sg.games[game]["def"]).forEach(([n, w]) => {
                 if (w === word) { 
+                    console.log("< remove definition", n, ">");
                     expired.push(n);
                     delete sg.games[game]["def"][n];
                 }
             });
         }
-        // En cas de contre du meneur raté le mot de la définition n'est pas révélé
-        else if (role === "leader" && !isvalid) { word = ""; }
+        
+        if (role === "leader") {
+            // En cas de contre du meneur réussi les détectives perdent un essai 
+            if (isvalid) { sg.games[game]["ntry"]--; }
+            // En cas de contre du meneur raté le mot de la définition n'est pas révélé
+            else { word = ""; }
+        }
 
         // Diffusion du contact à tous les joueurs qu'il soit réussi ou non
         // Si c'est le pseudo du leader c'est un contre sinon c'est un vrai contact
         // Variante: ne diffuser que si accepted et retirer "word", "accepted"
         res.push({"type": "contact", "word1": word, "word2": rq["word"], "pseudo": sl.pseudo, "ndef": ndef, 
-        "expired": expired, "accepted": isvalid});
+        "ntry": -1, "expired": expired, "accepted": isvalid});
 
         if (role === "detective") {
             // Diffusion de l'indice
@@ -198,12 +207,32 @@ export function contact(rq, sg, sl) {
                 // TODO: Vider les numéros de définition dans "players" et faire repartir ndef = 0 ?
                 console.log("< hint found", secret, ">");
                 res.push({"type": "secret", "word": secret});
+                // Fin de partie si mot secret trouvé par contact entre détectives ou si toutes les lettres trouvées
+                if (sg.games[game]["secret"] === word || sg.games[game]["secret"].length === sg.games[game]["letters"]) {
+                    winner = "detective";
+                }
             }
             // Echec du contact
-            //else { games[game]["try"]--; }
-        }    
+            else { 
+                sg.games[game]["ntry"]--;
+                // Fin de partie si mot secret trouvé par contact entre détectives
+                if ([word, rq["word"]].includes(sg.games[game]["secret"])) {
+                    winner = "leader";
+                }
+            }
+        }
 
-        // TODO: Gestion de fin de partie try === 0 || games[game]["letters"] === games[game]["secret"].length
+        // Le message de contact doit être envoyé en priorité
+        res[0]["ntry"] = sg.games[game]["ntry"];
+
+        // Gestion de fin de partie
+        if (sg.games[game]["ntry"] === 0) { 
+            winner = "leader"; 
+        }
+        if (winner) {
+            console.log("< end game winner", winner, ">");
+            res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"]});
+        }
     }
     return {"broadcast": res};
 }
@@ -215,7 +244,7 @@ export function onclose(sg, sl) {
     console.log("<", sl.pseudo, "unregistered >");
     if (sg.games.hasOwnProperty(game)) {
         if (role === "detective") {
-            sg.games[game]["players"].delete(sl.pseudo);
+            delete sg.games[game]["players"][sl.pseudo];
         }
         // TODO: Avertir les autres joueurs si partie en cours
         // Si le joueur est leader la partie s'arrête

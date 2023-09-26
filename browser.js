@@ -58,6 +58,8 @@ ws.onmessage = function(ev) {
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
             document.getElementById("game").innerHTML = game;
+            // Affichage du nombre d'essais restants
+            document.getElementById("ntry").textContent = data["ntry"];
             // Affichage du mot secret ou indice si déjà renseigné
             document.getElementById("secret").textContent = data["secret"];
 
@@ -216,6 +218,7 @@ ws.onmessage = function(ev) {
         def_div.querySelector("p.searcher").textContent = data["pseudo"];
         def_div.querySelector("p.word").textContent = word1;
         def_div.querySelector("p.contact").textContent = word2;
+        document.getElementById("ntry").textContent = data["ntry"];
         if (data["accepted"]) {
             // Contre du meneur
             if (data["pseudo"] === leader) {

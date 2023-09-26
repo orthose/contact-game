@@ -12,7 +12,7 @@ export const players = {};
 /**
  * Objet stockant l'état des parties
  * 
- * {"game1": {"secret": "tomate", "letters": 1, "words": Set(), 
+ * {"game1": {"secret": "tomate", "letters": 1, "words": Set(), "ntry": 10,
  *            "leader": "pseudo1", "ndef": 2, "def": {0: "tome", 2: "tomate", ...},
  *            "players": {"pseudo2": Set(0, 2), ...}}, ...}
  * 
@@ -20,6 +20,7 @@ export const players = {};
  * "secret": mot secret choisi par le meneur
  * "letters": nombre de lettres obtenues par les détectives
  * "words": mots déjà révélés ne pouvant plus être utilisés
+ * "ntry": nombre d'essais restants avant que le meneur gagne
  * "leader": pseudo du meneur de la partie
  * "ndef": compteur de définitions
  * "def": numéro de définition unique associé au mot à deviner
