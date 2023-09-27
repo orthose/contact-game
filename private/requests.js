@@ -126,7 +126,7 @@ export function definition(rq, sg, sl) {
     const role = getRole(sg, sl);
     const ndef = sg.games[game]["ndef"];
     // TODO: Vérifier que la définition ne contient pas le mot proposé ou une racine
-    const isvalid = word && role === "detective" && game !== "" && sg.games.hasOwnProperty(game)
+    const isvalid = role === "detective" && game !== "" && sg.games.hasOwnProperty(game)
         && word.startsWith(sg.games[game]["secret"].slice(0, sg.games[game]["letters"]))
         && !sg.games[game]["words"].has(word);
     if (isvalid) {
@@ -231,7 +231,20 @@ export function contact(rq, sg, sl) {
         }
         if (winner) {
             console.log("< end game winner", winner, ">");
+            const nextLeader = winner === "leader" ? sg.games[game]["leader"] : sl.pseudo;
             res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"]});
+            res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader});
+            // Réinitialisation de la partie
+            sg.games[game]["secret"] = "";
+            sg.games[game]["letters"] = 1;
+            sg.games[game]["words"] = new Set();
+            sg.games[game]["ntry"] = 5;
+            sg.games[game]["ndef"] = 0;
+            sg.games[game]["def"] = {};
+            sg.games[game]["leader"] = nextLeader;
+            Object.keys(sg.games[game]["players"]).forEach(p => {
+                sg.games[game]["players"][p] = new Set();
+            });
         }
     }
     return {"broadcast": res};

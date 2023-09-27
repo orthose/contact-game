@@ -52,7 +52,16 @@ ws.onmessage = function(ev) {
 
     // Rejoindre une partie
     else if ("joinGame" === data["type"]) {
-        if (data["accepted"]) {
+        // Manche suivante d'une partie
+        if (!data.hasOwnProperty("accepted")) {
+            const main = document.querySelector("main");
+            const continue_button = document.createElement("button");
+            continue_button.textContent = "Continuer";
+            //continue_button.onclick = ...;
+            main.appendChild(continue_button);
+        }
+        // Rejoindre une salle
+        else if (data["accepted"]) {
             game = data["game"];
             leader = data["leader"];
             role = leader === pseudo ? "leader" : "detective";
@@ -65,7 +74,7 @@ ws.onmessage = function(ev) {
 
             // Formulaire de choix du mot secret
             if (role === "leader") {
-                const main = document.querySelector("main")
+                const main = document.querySelector("main");
                 main.innerHTML = "";
 
                 const secret_label = document.createElement("label");
@@ -86,7 +95,7 @@ ws.onmessage = function(ev) {
 
             // Démarrage du jeu
             else if (role === "detective") {
-                const main = document.querySelector("main")
+                const main = document.querySelector("main");
                 main.innerHTML = "";
 
                 const def_div = document.createElement("div");
@@ -125,10 +134,22 @@ ws.onmessage = function(ev) {
     }
 
     // Quitter la partie
+    // TODO: Créer un bouton pour quitter la partie
     else if ("quitGame" === data["type"]) {
         game = ""; role = ""; leader = "";
 
         // TODO: Afficher la page de création de partie
+    }
+
+    // Fin de partie
+    else if ("endGame" === data["type"]) {
+        if (role === "detective") {
+            document.getElementById("secret").textContent = data["word"];
+        }
+        const main = document.querySelector("main");
+        const winner_p = document.createElement("p");
+        winner_p.textContent = data["winner"] === "leader" ? `Le meneur ${leader} a gagné !` : "Les détectives ont gagné !";
+        main.appendChild(winner_p);
     }
 
     // Réception du mot secret

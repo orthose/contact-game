@@ -12,7 +12,7 @@ export const players = {};
 /**
  * Objet stockant l'état des parties
  * 
- * {"game1": {"secret": "tomate", "letters": 1, "words": Set(), "ntry": 10,
+ * {"game1": {"secret": "tomate", "letters": 1, "words": Set(), "ntry": 5,
  *            "leader": "pseudo1", "ndef": 2, "def": {0: "tome", 2: "tomate", ...},
  *            "players": {"pseudo2": Set(0, 2), ...}}, ...}
  * 
