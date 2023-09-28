@@ -56,10 +56,12 @@ wss.on("connection", function(ws) {
 
     // Déconnexion du joueur
     ws.onclose = function() {
-        const game = sg.players[sl.pseudo]["game"];
-        const rp = onclose(sg, sl);
-        if (rp.hasOwnProperty("broadcast")) { 
-            batch((json) => broadcast(json, game), rp["broadcast"]); 
+        if (sl.pseudo) {
+            const game = sg.players[sl.pseudo]["game"];
+            const rp = onclose(sg, sl);
+            if (rp.hasOwnProperty("broadcast")) { 
+                batch((json) => broadcast(json, game), rp["broadcast"]); 
+            }
         }
     }
 
