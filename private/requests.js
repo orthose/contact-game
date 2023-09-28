@@ -82,21 +82,27 @@ export function joinGame(rq, sg, sl) {
 export function quitGame(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
+    const res = {"send": {"type": "quitGame", "accepted": true}};
     console.log("<", sl.pseudo, "left", game, ">");
+    // Le joueur participe à une partie
     if (sg.games.hasOwnProperty(game)) {
         // Le joueur quitte la liste des participants
-        if (role === "detective") {
-            delete sg.games[game]["players"][sl.pseudo];
+        delete sg.games[game]["players"][sl.pseudo];
+        // On avertit les autres joueurs du départ
+        res["broadcast"] = [];
+        //res["broadcast"] = [{"type": "quitGame", "pseudo": sl.pseudo}];
+        // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
+        // Alors on désigne un nouveau meneur
+        if (role === "leader" && sg.games[game]["secret"] === "") {
+            const nextLeader = Object.keys(sg.games[game]["players"])[0];
+            res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader});
         }
-        // TODO: Avertir les autres joueurs si partie en cours
-        // Si le joueur est leader la partie s'arrête
-        //else {}
     }
     
     // Réinitialisation des paramètres du joueur
     sg.players[sl.pseudo]["game"] = "";
 
-    return {"send": {"type": "quitGame", "accepted": true}};
+    return res;
 }
 
 // Proposer un mot secret
@@ -252,21 +258,17 @@ export function contact(rq, sg, sl) {
 
 // Déconnexion du joueur
 export function onclose(sg, sl) {
-    const game = sg.players[sl.pseudo]["game"];
-    const role = getRole(sg, sl);
     console.log("<", sl.pseudo, "unregistered >");
-    if (sg.games.hasOwnProperty(game)) {
-        if (role === "detective") {
-            delete sg.games[game]["players"][sl.pseudo];
-        }
-        // TODO: Avertir les autres joueurs si partie en cours
-        // Si le joueur est leader la partie s'arrête
-        //else {}
-    }
-
-    // Libérer la mémoire
-    // TODO: Si partie en cours supprimer le joueur de la partie
+    
+    // Le joueur doit éventuellement quitter la partie
+    const res = quitGame({}, sg, sl);
+    // On ne renvoie pas de message au joueur
+    delete res["send"];
+    
+    // Suppression du joueur
     delete sg.players[sl.pseudo];
+
+    return res;
 }
 
 // Association type de requête <-> fonction

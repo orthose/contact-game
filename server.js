@@ -15,14 +15,20 @@ wss.on("connection", function(ws) {
     const send = (json) => ws.send(JSON.stringify(json));
 
     // Diffusion d'un message à tous les joueurs de la partie courante
-    function broadcast(json) {
-        const game = sg.players[sl.pseudo]["game"];
+    function broadcast(json, game="") {
+        game = game ? game : sg.players[sl.pseudo]["game"];
         Object.keys(sg.games[game]["players"]).forEach(function(player) {
             const pws = sg.players[player]["ws"];
             if (pws.readyState === WebSocket.OPEN) {
                 pws.send(JSON.stringify(json));
             }
         });
+    }
+
+    // Gestion des suites de messages
+    function batch(fsend, msg) {
+        if (!Array.isArray(msg)) { msg = [msg]; }
+        msg.forEach((m) => fsend(m));
     }
 
     ws.on("message", function(data) {
@@ -36,15 +42,11 @@ wss.on("connection", function(ws) {
             if (request["syntax"](rq)) {
                 // Traitement de la requête
                 const rp = request["callback"](rq, sg, sl);
-                // Gestion des suites de messages
-                function batch(fsend, msg) {
-                    if (!Array.isArray(msg)) { msg = [msg]; }
-                    msg.forEach((m) => fsend(m));
-                }
                 if (rp.hasOwnProperty("send")) { batch(send, rp["send"]); }
                 if (rp.hasOwnProperty("broadcast")) { batch(broadcast, rp["broadcast"]); }
             }
         }
+
         // On ignore les messages incorrects
 
         // Debug
@@ -53,7 +55,13 @@ wss.on("connection", function(ws) {
     });
 
     // Déconnexion du joueur
-    ws.onclose = function() { onclose(sg, sl); }
+    ws.onclose = function() {
+        const game = sg.players[sl.pseudo]["game"];
+        const rp = onclose(sg, sl);
+        if (rp.hasOwnProperty("broadcast")) { 
+            batch((json) => broadcast(json, game), rp["broadcast"]); 
+        }
+    }
 
     //ws.on('error', console.error);
 });
