@@ -24,11 +24,13 @@ const requests = {
             leader = rq["leader"];
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
-            document.getElementById("game").innerHTML = game;
+            document.getElementById("game").textContent = game;
             // Affichage du nombre d'essais restants
             document.getElementById("ntry").textContent = rq["ntry"];
             // Affichage du mot secret ou indice si déjà renseigné
             document.getElementById("secret").textContent = rq["secret"];
+            // Affichage des joueurs
+            pages.listPlayers(rq["players"]);
 
             // Formulaire de choix du mot secret
             if (role === "leader") { pages.chooseSecret(); }
@@ -44,6 +46,7 @@ const requests = {
     // Quitter la partie
     quitGame: function(rq) {
         game = ""; role = ""; leader = "";
+        // TODO: Nettoyer les balises d'information du header
         pages.chooseGame();
     },
 
@@ -53,6 +56,16 @@ const requests = {
             document.getElementById("secret").textContent = rq["word"];
         }
         pages.endGame(rq["winner"] === "leader" ? `Le meneur ${leader} a gagné !` : "Les détectives ont gagné !");
+    },
+
+    addPlayer: function(rq) {
+        if (rq["pseudo"] !== pseudo) {
+            pages.addPlayer(rq["pseudo"]);
+        }
+    },
+
+    removePlayer: function(rq) {
+        pages.removePlayer(rq["pseudo"]);
     },
 
     secret: function(rq) {

@@ -75,7 +75,9 @@ export function joinGame(rq, sg, sl) {
     const ntry = sg.games[game]["ntry"];
     const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
     const leader = sg.games[game]["leader"];
-    return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, "accepted": isvalid}};
+    return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
+    "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid}, 
+    "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}};
 }
 
 // Quitter la partie en cours
@@ -89,13 +91,13 @@ export function quitGame(rq, sg, sl) {
         // Le joueur quitte la liste des participants
         delete sg.games[game]["players"][sl.pseudo];
         // On avertit les autres joueurs du départ
-        res["broadcast"] = [];
-        //res["broadcast"] = [{"type": "quitGame", "pseudo": sl.pseudo}];
+        res["broadcast"] = [{"type": "removePlayer", "pseudo": sl.pseudo}];
         // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
         // Alors on désigne un nouveau meneur
         if (role === "leader" && sg.games[game]["secret"] === "") {
             const nextLeader = Object.keys(sg.games[game]["players"])[0];
-            res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader});
+            res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+            "players": Object.keys(sg.games[game]["players"])});
         }
     }
     
@@ -244,7 +246,8 @@ export function contact(rq, sg, sl) {
             console.log("< end game winner", winner, ">");
             const nextLeader = winner === "leader" ? sg.games[game]["leader"] : sl.pseudo;
             res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"]});
-            res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader});
+            res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+            "players": Object.keys(sg.games[game]["players"])});
             // Réinitialisation de la partie
             sg.games[game]["secret"] = "";
             sg.games[game]["letters"] = 1;

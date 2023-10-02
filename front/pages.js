@@ -90,6 +90,26 @@ const pages = {
         main.appendChild(createElement("p", {textContent: msg}));
     },
 
+    listPlayers: function(players) {
+        const ul = document.getElementById("players");
+        players.forEach(p => {
+            ul.appendChild(createElement("li", {id: p, textContent: p}));
+        });
+    },
+
+    addPlayer: function(player) {
+        const players = document.getElementById("players");
+        players.appendChild(createElement("li", {id: player, textContent: player}));
+    },
+
+    removePlayer: function(player) {
+        document.querySelector(`#players li#${player}`).remove();
+    },
+
+    /*emptyPlayers: function() {
+        document.getElementById("players").innerHTML = "";
+    },*/
+
     addDefinition: function(rq) {
         const div = createElement("div", {id: rq["ndef"], onclick: callbacks.contact});
         div.appendChild(createElement("p", {className: "author", textContent: rq["pseudo"]}));
@@ -99,5 +119,4 @@ const pages = {
         div.appendChild(createElement("p", {className: "definition", textContent: rq["def"]}));
         document.getElementById("definition").appendChild(div);
     },
-
 };
