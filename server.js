@@ -1,5 +1,5 @@
-import { players, games } from "./private/data.js";
-import { requests, onclose } from "./private/requests.js";
+import { players, games } from "./back/data.js";
+import { requests, onclose } from "./back/requests.js";
 import { WebSocket, WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({port: 8080});
