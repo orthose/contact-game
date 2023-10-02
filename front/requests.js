@@ -66,23 +66,15 @@ const requests = {
 
         }
         // Nouvel indice
-        else {
-            // Suppression de toutes les définitions non-jouées
-            // TODO: Vérifier que c'est nécessaire normalement expired suffit
-            document.querySelectorAll("div#definition div").forEach(
-                (div) => { if (!["success-leader", "success", "fail"].includes(div.className)) { div.remove(); } }
-            );
+        else if (role === "leader") {
+            const p_secret = document.getElementById("secret");
+            const secret = p_secret.textContent;
+            const letters = rq["word"].length;
+            p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
 
-            if (role === "leader") {
-                const p_secret = document.getElementById("secret");
-                const secret = p_secret.textContent;
-                const letters = rq["word"].length;
-                p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
-
-            }
-            else if (role === "detective") {
-                document.getElementById("secret").textContent = rq["word"];
-            }
+        }
+        else if (role === "detective") {
+            document.getElementById("secret").textContent = rq["word"];
         }
     },
 

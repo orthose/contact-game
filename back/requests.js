@@ -132,6 +132,7 @@ export function definition(rq, sg, sl) {
     const role = getRole(sg, sl);
     const ndef = sg.games[game]["ndef"];
     // TODO: Vérifier que la définition ne contient pas le mot proposé ou une racine
+    // TODO: Vérifier que le mot est dans le dictionnaire
     const isvalid = role === "detective" && game !== "" && sg.games.hasOwnProperty(game)
         && word.startsWith(sg.games[game]["secret"].slice(0, sg.games[game]["letters"]))
         && !sg.games[game]["words"].has(word);
@@ -180,14 +181,6 @@ export function contact(rq, sg, sl) {
             sg.games[game]["words"].add(sg.games[game]["def"][ndef]);
             // Suppression de la définition
             delete sg.games[game]["def"][ndef];
-            // Recherche et suppression des définitions correspondant au mot consommé
-            Object.entries(sg.games[game]["def"]).forEach(([n, w]) => {
-                if (w === word) { 
-                    console.log("< remove definition", n, ">");
-                    expired.push(n);
-                    delete sg.games[game]["def"][n];
-                }
-            });
         }
         
         if (role === "leader") {
@@ -208,8 +201,6 @@ export function contact(rq, sg, sl) {
             if (isvalid) {
                 const letters = ++sg.games[game]["letters"];
                 const secret = sg.games[game]["secret"].slice(0,letters);
-                // Suppression de toutes les définitions
-                sg.games[game]["def"] = {};
                 // TODO: Vider les numéros de définition dans "players" et faire repartir ndef = 0 ?
                 console.log("< hint found", secret, ">");
                 res.push({"type": "secret", "word": secret});
@@ -229,7 +220,21 @@ export function contact(rq, sg, sl) {
         }
 
         // Le message de contact doit être envoyé en priorité
+        // Certains champs doivent être modifiés à cet endroit
+
+        // Nombre d'essais restant
         res[0]["ntry"] = sg.games[game]["ntry"];
+
+        // Suppression des définitions expirées
+        const hint = sg.games[game]["secret"].slice(0,sg.games[game]["letters"]);
+        Object.entries(sg.games[game]["def"]).forEach(([n, w]) => {
+            // Mot consommé ou ne correspond plus à l'indice
+            if (w === word || !w.startsWith(hint)) { 
+                console.log("< remove definition", n, ">");
+                expired.push(n);
+                delete sg.games[game]["def"][n];
+            }
+        });
 
         // Gestion de fin de partie
         if (sg.games[game]["ntry"] === 0) { 
