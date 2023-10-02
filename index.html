@@ -12,9 +12,13 @@
     <!--<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu">-->
     <link href='style.css' rel='stylesheet'>
     <!-- Scripts -->
-    <script src="browser.js"></script>
+    <script src="./public/data.js"></script>
+    <script src="./public/callbacks.js"></script>
+    <script src="./public/pages.js"></script>
+    <script src="./public/requests.js"></script>
+    <script src="./browser.js"></script>
 </head>
-<body>
+<body onload="pages.register()">
     <header>
         <h1>Contact Game</h1>
         <p id="pseudo"></p>
@@ -22,10 +26,6 @@
         <p id="ntry"></p>
         <p id="secret"></p>
     </header>
-    <main>
-        <label for="pseudo_input">Pseudo</label>
-        <input type="text" id="pseudo_input" />
-        <button onclick="register()">Envoyer</button>
-    </main>
+    <main></main>
 </body>
 </html>
