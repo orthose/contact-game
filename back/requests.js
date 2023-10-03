@@ -39,6 +39,7 @@ export function register(rq, sg, sl) {
 // Déconnecter le joueur courant
 export function unregister(rq, sg, sl) {
     sl.ws.close();
+    return {};
 }
 
 // Rejoindre ou créer une partie
@@ -269,10 +270,13 @@ export function contact(rq, sg, sl) {
 export function onclose(sg, sl) {
     console.log("<", sl.pseudo, "unregistered >");
     
-    // Le joueur doit éventuellement quitter la partie
-    const res = quitGame({}, sg, sl);
-    // On ne renvoie pas de message au joueur
-    delete res["send"];
+    let res = {};
+    if (requests["quitGame"]["precheck"]({}, sg, sl)) {
+        // Le joueur doit éventuellement quitter la partie
+        res = quitGame({}, sg, sl);
+        // On ne renvoie pas de message au joueur
+        delete res["send"];
+    }
     
     // Suppression du joueur
     delete sg.players[sl.pseudo];
