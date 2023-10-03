@@ -95,14 +95,19 @@ export function quitGame(rq, sg, sl) {
     if (sg.games.hasOwnProperty(game)) {
         // Le joueur quitte la liste des participants
         delete sg.games[game]["players"][sl.pseudo];
-        // On avertit les autres joueurs du départ
-        res["broadcast"] = [{"type": "removePlayer", "pseudo": sl.pseudo}];
-        // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
-        // Alors on désigne un nouveau meneur
-        if (role === "leader" && sg.games[game]["secret"] === "") {
-            const nextLeader = Object.keys(sg.games[game]["players"])[0];
-            res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
-            "players": Object.keys(sg.games[game]["players"])});
+        // Tous les joueurs ont quitté la partie
+        if (Object.keys(sg.games[game]["players"]).length === 0) {
+            delete sg.games[game];
+        } else {
+            // On avertit les autres joueurs du départ
+            res["broadcast"] = [{"type": "removePlayer", "pseudo": sl.pseudo}];
+            // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
+            // Alors on désigne un nouveau meneur
+            if (role === "leader" && sg.games[game]["secret"] === "") {
+                const nextLeader = Object.keys(sg.games[game]["players"])[0];
+                res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+                "players": Object.keys(sg.games[game]["players"])});
+            }
         }
     }
     
