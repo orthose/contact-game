@@ -41,13 +41,13 @@ wss.on("connection", function(ws) {
             const request = requests[rq["type"]];
             // La syntaxe de la requête est-elle correcte ?
             if (request["syntax"](rq)) {
-                // Récupération de l'identifiant de partie pour la diffusion
-                const game = sl.pseudo ? sg.players[sl.pseudo]["game"] : "";
                 // Traitement de la requête
                 const rp = request["callback"](rq, sg, sl);
                 if (rp.hasOwnProperty("send")) { batch(send, rp["send"]); }
-                if (rp.hasOwnProperty("broadcast")) { 
-                    batch((json) => broadcast(json, game), rp["broadcast"]); 
+                if (rp.hasOwnProperty("broadcast")) {
+                    // L'identifiant de partie peut être créé ou supprimé par la callback
+                    // Lors d'une diffusion il doit être renseigné dans le message
+                    batch((json) => broadcast(json, rp["game"]), rp["broadcast"]); 
                 }
             }
         }

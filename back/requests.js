@@ -79,7 +79,7 @@ export function joinGame(rq, sg, sl) {
         const leader = sg.games[game]["leader"];
         return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
         "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid}, 
-        "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}};
+        "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}, "game": game};
     } else {
         return {"send": {"type": "joinGame", "game": game, "accepted": isvalid}};
     }
@@ -99,6 +99,7 @@ export function quitGame(rq, sg, sl) {
         if (Object.keys(sg.games[game]["players"]).length === 0) {
             delete sg.games[game];
         } else {
+            res["game"] = game;
             // On avertit les autres joueurs du départ
             res["broadcast"] = [{"type": "removePlayer", "pseudo": sl.pseudo}];
             // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
@@ -123,7 +124,7 @@ export function secret(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     // TODO: Vérifier la validité du mot dans le dictionnaire
-    const isvalid = role === "leader" && game !== "" 
+    const isvalid = role === "leader" && game !== ""
         && sg.games.hasOwnProperty(game) && sg.games[game]["secret"] === "";
     // Informe le meneur si le mot est validé ou non
     const res = {"send": {"type": "secret", "word": secret, "accepted": isvalid}};
@@ -131,6 +132,7 @@ export function secret(rq, sg, sl) {
         console.log("<", sl.pseudo, "choosed", secret, "for", game, ">");
         sg.games[game]["secret"] = secret;
         // Diffusion à tous les joueurs de la première lettre
+        res["game"] = game;
         res["broadcast"] = {"type": "secret", "word": secret.slice(0,1)};
     }
     return res;
@@ -155,7 +157,7 @@ export function definition(rq, sg, sl) {
         sg.games[game]["ndef"]++;
         // Diffusion à tous les joueurs de la partie
         // Les messages de diffusion n'ont pas de champ "accepted"
-        return {"broadcast": {"type": "definition", "def": def, "pseudo": sl.pseudo, "ndef": ndef}};
+        return {"broadcast": {"type": "definition", "def": def, "pseudo": sl.pseudo, "ndef": ndef}, "game": game};
     }
     // Définition refusée
     return {"send": {"type": "definition", "def": def, "word": word, "ndef": ndef, "accepted": false}};
@@ -271,7 +273,7 @@ export function contact(rq, sg, sl) {
             });
         }
     }
-    return {"broadcast": res};
+    return {"broadcast": res, "game": game};
 }
 
 // Déconnexion du joueur
