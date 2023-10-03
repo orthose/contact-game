@@ -4,8 +4,9 @@ const requests = {
         if (rq["accepted"]) {
             pseudo = rq["pseudo"]
             // Affichage du pseudo
-            pages.addPlayer(pseudo, display=true);
+            pages.addPlayer(pseudo);
             document.querySelector("#players").style = "display: block";
+            document.querySelector("#players li").classList.add("mypseudo");
             // Formulaire de création de partie
             pages.chooseGame();
         } else {
@@ -32,6 +33,8 @@ const requests = {
             document.getElementById("secret").textContent = rq["secret"];
             // Affichage des joueurs
             pages.listPlayers(rq["players"]);
+            const li = document.querySelector(`#players li#${leader}`);
+            li.textContent = "⭐ " + li.textContent;
 
             // Formulaire de choix du mot secret
             if (role === "leader") { pages.chooseSecret(); }

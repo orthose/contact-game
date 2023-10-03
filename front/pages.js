@@ -102,28 +102,13 @@ const pages = {
         });
     },
 
-    addPlayer: function(player, display=false) {
-        display = "display: " + (display ? "block" : "none");
+    addPlayer: function(player) {
         const ul = document.querySelector("#players ul");
-        ul.appendChild(createElement("li", {id: player, textContent: player, style: display}));
+        ul.appendChild(createElement("li", {id: player, textContent: player}));
     },
 
     removePlayer: function(player) {
         document.querySelector(`#players ul li#${player}`).remove();
-    },
-
-    foldList: function(tag) {
-        for (let i = 1; i < tag.children.length; i++) {
-            tag.children[i].style = "display: none";
-        }
-        tag.onclick = () => { pages.unfoldList(tag); };
-    },
-
-    unfoldList: function(tag) {
-        for (let li of tag.children) {
-            li.style = "display: block";
-        }
-        tag.onclick = () => { pages.foldList(tag); } ;
     },
 
     /*emptyPlayers: function() {
