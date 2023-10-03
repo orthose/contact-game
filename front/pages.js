@@ -38,6 +38,10 @@ const pages = {
         }));
     },
 
+    printLifes: function(ntry) {
+        document.getElementById("ntry").textContent = "❤️".repeat(ntry);
+    },
+
     chooseSecret: function() {
         const main = document.querySelector("main");
         main.innerHTML = "";

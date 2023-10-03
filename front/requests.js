@@ -28,7 +28,7 @@ const requests = {
             // Affichage du nom de partie
             document.getElementById("game").textContent = game;
             // Affichage du nombre d'essais restants
-            document.getElementById("ntry").textContent = rq["ntry"];
+            pages.printLifes(rq["ntry"]);
             // Affichage du mot secret ou indice si déjà renseigné
             document.getElementById("secret").textContent = rq["secret"];
             // Affichage des joueurs
@@ -112,7 +112,7 @@ const requests = {
         div.querySelector("p.searcher").textContent = rq["pseudo"];
         div.querySelector("p.word").textContent = word1;
         div.querySelector("p.contact").textContent = word2;
-        document.getElementById("ntry").textContent = rq["ntry"];
+        pages.printLifes(rq["ntry"]);
         if (rq["accepted"]) {
             // Contre du meneur
             if (rq["pseudo"] === leader) {
