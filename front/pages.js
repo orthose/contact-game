@@ -3,16 +3,22 @@ function createElement(tagName, kwargs={}) {
 }
 
 const pages = {
+    invalidInput: function(input) {
+        input.classList.add("invalid");
+        input.oninput = function() {
+            input.classList.remove("invalid");
+            input.oninput = null;
+        };
+    },
+
     register: function() {
         const main = document.querySelector("main");
         main.innerHTML = "";
 
-        main.appendChild(createElement("label", {
-            textContent: "Pseudo", for: "pseudo_input",
-        }));
         main.appendChild(createElement("input", {
-            type: "text", id: "pseudo_input",
+            type: "text", id: "pseudo_input", placeholder: "Pseudo",
         }));
+        main.appendChild(createElement("br"));
         main.appendChild(createElement("button", {
             textContent: "Envoyer", 
             onclick: callbacks.register,
@@ -24,10 +30,10 @@ const pages = {
         main.innerHTML = "";
 
         main.appendChild(createElement("input", {
-            type: "text", id: "game_input",
+            type: "text", id: "game_input", placeholder: "Salle",
         }));
         main.appendChild(createElement("button", {
-            textContent: "Rejoindre une partie", 
+            textContent: "Rejoindre", 
             onclick: callbacks.joinGame,
         }));
     },
@@ -91,19 +97,33 @@ const pages = {
     },
 
     listPlayers: function(players) {
-        const ul = document.getElementById("players");
         players.forEach(p => {
-            ul.appendChild(createElement("li", {id: p, textContent: p}));
+            if (p !== pseudo) { pages.addPlayer(p) }
         });
     },
 
-    addPlayer: function(player) {
-        const players = document.getElementById("players");
-        players.appendChild(createElement("li", {id: player, textContent: player}));
+    addPlayer: function(player, display=false) {
+        display = "display: " + (display ? "block" : "none");
+        const ul = document.querySelector("#players ul");
+        ul.appendChild(createElement("li", {id: player, textContent: player, style: display}));
     },
 
     removePlayer: function(player) {
-        document.querySelector(`#players li#${player}`).remove();
+        document.querySelector(`#players ul li#${player}`).remove();
+    },
+
+    foldList: function(tag) {
+        for (let i = 1; i < tag.children.length; i++) {
+            tag.children[i].style = "display: none";
+        }
+        tag.onclick = () => { pages.unfoldList(tag); };
+    },
+
+    unfoldList: function(tag) {
+        for (let li of tag.children) {
+            li.style = "display: block";
+        }
+        tag.onclick = () => { pages.foldList(tag); } ;
     },
 
     /*emptyPlayers: function() {

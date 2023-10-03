@@ -1,5 +1,113 @@
-div {
+/* Téléphone toute la largeur de l'écran */
+@media only screen and (max-width: 499px) {
+    body {
+        width: calc(100% - 20px);
+        margin: 10px 10px;
+    }
+
+    h1 {
+        font-size: 12vw;
+    }
+}
+  
+/* Ordinateur taille maximale de 500px */
+@media only screen and (min-width: 500px) {
+    body {
+        width: 500px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    h1 {
+        font-size: 60px;
+    }
+}
+
+body {
+    background-image: url("./assets/img/paper.png");
+    background-repeat: repeat;
+    font-family: "Ubuntu";
+    font-weight: normal;
+    font-style: normal;
+    font-size: x-large;
+    color: darkblue;
+    overflow-y: scroll;
+}
+
+h1 {
+    font-family: "LovelyHome";
+    text-align: center;
+}
+
+/*div {
     border: 1px solid black;
+}*/
+
+input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 35px;
+    margin: 10px 0;
+    font-size: x-large;
+    border: solid 2px darkblue;
+    color: darkblue;
+}
+
+input::placeholder {
+    color: darkblue;
+    opacity: 0.5;
+}
+
+input:focus {
+    outline: none;
+}
+
+/*input[type=submit] {
+    width: 100%;
+    line-height: 0;
+    margin: 10px 0;
+    padding: 15px 0;
+    background-color: black;
+    border: solid medium white;
+    color: white;
+}*/
+
+button {
+    display: block;
+    width: auto;
+    line-height: 0;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 10px;
+    background-color: darkblue;
+    border: none;
+    color: white;
+    font-size: x-large;
+}
+
+button:hover {
+    color: aqua;
+}
+
+input.invalid {
+    color: red; 
+    border-color: red;
+}
+
+ul {
+    width: calc(100% - 80px);
+    list-style: none;
+    display: inline-block;
+    padding: 0px 0px;
+}
+
+li {
+    width: 100%;
+    background-color: darkblue;
+    color: white;
 }
 
 .success-leader {

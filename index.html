@@ -6,11 +6,11 @@
     <!-- Responsive web site for smartphone -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- Icônes -->
-    <link rel="icon" type="image/png" href="favicon.png" sizes="512x512">
-    <link rel="apple-touch-icon" type="image/png" href="favicon.png" sizes="512x512">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
+    <link rel="apple-touch-icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
     <!-- Feuilles de style -->
-    <!--<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu">-->
-    <link href='style.css' rel='stylesheet'>
+    <link href="./assets/fonts/fonts.css" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
     <!-- Scripts -->
     <script src="./front/data.js"></script>
     <script src="./front/callbacks.js"></script>
@@ -21,8 +21,11 @@
 <body onload="pages.register()">
     <header>
         <h1>Contact Game</h1>
-        <p id="pseudo"></p>
-        <ul id="players"></ul>
+        <div id="players" style="display: none;">
+            <img src="./assets/img/player.png" style="vertical-align:middle">
+            <ul style="margin-left: 5px;" onclick="pages.unfoldList(this)"></ul>
+        </div>
+        <!--<ul id="players"></ul>-->
         <p id="game"></p>
         <p id="ntry"></p>
         <p id="secret"></p>

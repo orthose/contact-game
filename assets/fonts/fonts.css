@@ -1,0 +1,12 @@
+/* https://gwfh.mranftl.com/fonts/ubuntu?subsets=latin */
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: normal;
+    src: url('Ubuntu.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: "LovelyHome";
+	src: url("LovelyHome.ttf") format("truetype");
+}

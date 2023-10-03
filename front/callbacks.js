@@ -5,8 +5,8 @@ const callbacks = {
     },
     
     unregister: function() {
+        pseudo = ""; game = ""; role = ""; leader = "";
         send({"type": "unregister"});
-        pseudo = "";
     },
     
     joinGame: function() {

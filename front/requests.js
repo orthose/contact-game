@@ -4,11 +4,12 @@ const requests = {
         if (rq["accepted"]) {
             pseudo = rq["pseudo"]
             // Affichage du pseudo
-            document.getElementById("pseudo").textContent = pseudo;
+            pages.addPlayer(pseudo, display=true);
+            document.querySelector("#players").style = "display: block";
             // Formulaire de création de partie
             pages.chooseGame();
         } else {
-            document.getElementById("pseudo_input").style = "border-color: red";
+            pages.invalidInput(document.getElementById("pseudo_input"));
         }
     },
 
@@ -39,7 +40,7 @@ const requests = {
             else if (role === "detective") { pages.playGame(); }
 
         } else {
-            document.getElementById("game_input").style = "border-color: red";
+            pages.invalidInput(document.getElementById("game_input"));
         }
     },
 
