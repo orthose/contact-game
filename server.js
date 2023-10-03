@@ -15,14 +15,15 @@ wss.on("connection", function(ws) {
     const send = (json) => ws.send(JSON.stringify(json));
 
     // Diffusion d'un message à tous les joueurs de la partie courante
-    function broadcast(json, game="") {
-        game = game ? game : sg.players[sl.pseudo]["game"];
-        Object.keys(sg.games[game]["players"]).forEach(function(player) {
-            const pws = sg.players[player]["ws"];
-            if (pws.readyState === WebSocket.OPEN) {
-                pws.send(JSON.stringify(json));
-            }
-        });
+    function broadcast(json, game) {
+        if (sg.games.hasOwnProperty(game)) {
+            Object.keys(sg.games[game]["players"]).forEach(function(player) {
+                const pws = sg.players[player]["ws"];
+                if (pws.readyState === WebSocket.OPEN) {
+                    pws.send(JSON.stringify(json));
+                }
+            });
+        }
     }
 
     // Gestion des suites de messages
@@ -40,10 +41,14 @@ wss.on("connection", function(ws) {
             const request = requests[rq["type"]];
             // La syntaxe de la requête est-elle correcte ?
             if (request["syntax"](rq)) {
+                // Récupération de l'identifiant de partie pour la diffusion
+                const game = sl.pseudo ? sg.players[sl.pseudo]["game"] : "";
                 // Traitement de la requête
                 const rp = request["callback"](rq, sg, sl);
                 if (rp.hasOwnProperty("send")) { batch(send, rp["send"]); }
-                if (rp.hasOwnProperty("broadcast")) { batch(broadcast, rp["broadcast"]); }
+                if (rp.hasOwnProperty("broadcast")) { 
+                    batch((json) => broadcast(json, game), rp["broadcast"]); 
+                }
             }
         }
 
