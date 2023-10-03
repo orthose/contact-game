@@ -26,7 +26,8 @@ const requests = {
             leader = rq["leader"];
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
-            document.getElementById("game").textContent = game;
+            document.querySelector("#game").style = "display: block";
+            document.querySelector("#game span").textContent = game;
             // Affichage du nombre d'essais restants
             pages.printLifes(rq["ntry"]);
             // Affichage du mot secret ou indice si déjà renseigné
