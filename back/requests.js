@@ -72,12 +72,17 @@ export function joinGame(rq, sg, sl) {
         }
         sg.players[sl.pseudo]["game"] = game;
     }
-    const ntry = sg.games[game]["ntry"];
-    const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
-    const leader = sg.games[game]["leader"];
-    return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
-    "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid}, 
-    "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}};
+
+    if (isvalid) {
+        const ntry = sg.games[game]["ntry"];
+        const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
+        const leader = sg.games[game]["leader"];
+        return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
+        "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid}, 
+        "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}};
+    } else {
+        return {"send": {"type": "joinGame", "game": game, "accepted": isvalid}};
+    }
 }
 
 // Quitter la partie en cours
