@@ -5,6 +5,13 @@
     font-weight: normal;
     src: url('Ubuntu.woff2') format('woff2');
 }
+/* https://www.onlinewebfonts.com/download/9383f4b0bc1d264a5a7e094eb1ed0c0b */
+@font-face {
+    font-family: 'UbuntuMono';
+    font-style: normal;
+    font-weight: normal;
+    src: url('UbuntuMono.woff2') format('woff2');
+}
 
 @font-face {
 	font-family: "LovelyHome";

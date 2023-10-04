@@ -31,11 +31,10 @@ const requests = {
             // Affichage du nombre d'essais restants
             pages.printLifes(rq["ntry"]);
             // Affichage du mot secret ou indice si déjà renseigné
-            document.getElementById("secret").textContent = rq["secret"];
+            if (rq["secret"]) { pages.printSecret(rq["secret"]); }
             // Affichage des joueurs
             pages.listPlayers(rq["players"]);
-            const li = document.querySelector(`#players li#${leader}`);
-            li.textContent = "⭐ " + li.textContent;
+            if (leader) { pages.addLeaderStar(); }
 
             // Formulaire de choix du mot secret
             if (role === "leader") { pages.chooseSecret(); }
@@ -76,23 +75,18 @@ const requests = {
     secret: function(rq) {
         // Validation du mot secret du meneur
         if (rq["accepted"]) {
-            const secret = `<span style="color: blue">${rq["word"].slice(0,1)}</span>${rq["word"].slice(1)}`;
-            document.getElementById("secret").innerHTML = secret;
-
+            pages.printSecret(rq["word"]);
+            pages.foundLetters(1);
             // Démarrage du jeu
             pages.playGame();
 
         }
         // Nouvel indice
         else if (role === "leader") {
-            const p_secret = document.getElementById("secret");
-            const secret = p_secret.textContent;
-            const letters = rq["word"].length;
-            p_secret.innerHTML = `<span style="color: blue">${secret.slice(0,letters)}</span>${secret.slice(letters)}`;
-
+            pages.foundLetters(rq["word"].length);
         }
         else if (role === "detective") {
-            document.getElementById("secret").textContent = rq["word"];
+            pages.printSecret(rq["word"]);
         }
     },
 

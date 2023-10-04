@@ -134,6 +134,35 @@ div#game span {
     padding: 5px 10px;
 }
 
+div#game {
+    margin-bottom: 12px;
+}
+
+div#secret > span {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(100% - 75px);;
+    margin-left: 5px;
+}
+
+div#secret span span {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 2px;
+    padding-left: 3px;
+    font-family: "UbuntuMono";
+    font-size: xx-large;
+    background-color: darkblue;
+    color: white;
+}
+
+div#secret span.found {
+    color: aqua;
+}
+
 .success-leader {
     border-color: blue;
 }

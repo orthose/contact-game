@@ -38,6 +38,16 @@ const pages = {
         }));
     },
 
+    addLeaderStar: function() {
+        const li = document.querySelector(`#players li#${leader}`);
+        li.textContent = "⭐ " + li.textContent;
+    },
+
+    removeLeaderStar: function() {
+        const li = document.querySelector(`#players li#${leader}`);
+        li.textContent = li.textContent.slice(2);
+    },
+
     printLifes: function(ntry) {
         document.getElementById("ntry").textContent = "❤️".repeat(ntry);
     },
@@ -46,16 +56,28 @@ const pages = {
         const main = document.querySelector("main");
         main.innerHTML = "";
 
-        main.appendChild(createElement("label", {
-            textContent: "Mot secret", for: "secret_input",
-        }));
         main.appendChild(createElement("input", {
-            type: "text", id: "secret_input",
+            type: "text", id: "secret_input", placeholder: "Mot Secret",
         }));
         main.appendChild(createElement("button", {
             textContent: "Envoyer",
             onclick: callbacks.secret,
         }));
+    },
+
+    printSecret: function(secret) {
+        const span = document.querySelector("#secret span");
+        for (let i = 0; i < secret.length; i++) {
+            span.appendChild(createElement("span", {textContent: secret[i]}));
+        }
+        document.querySelector("#secret").style = "display: block";
+    },
+
+    foundLetters: function(letters) {
+        const span = document.querySelector("#secret span");
+        for (let i = 0; i < letters; i++) {
+            span.children[i].className = "found";
+        }
     },
 
     playGame: function() {
