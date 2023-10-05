@@ -132,23 +132,29 @@ const requests = {
         else {
             div.querySelector("span.searcher").textContent = rq["pseudo"];
             div.querySelector("div.words").style = "display: block";
-            div.querySelector("span.word1").textContent = rq["word1"];
+            if (!rq["accepted"]) {
+                const span = div.querySelector("span.word1");
+                span.textContent = rq["word1"];
+                span.style = "display: inline-block";
+            }
             spanWord = div.querySelector("span.word2");
         }
         Object.assign(spanWord, {
             textContent: rq["word2"],
             className: rq["accepted"] ? "success" : "fail",
         });
-        // La défintion est consommée
-        if (!(rq["pseudo"] === leader && !rq["accepted"] )) {
-            div.querySelector("input").remove();
-            div.querySelector("button").remove();
-            div.classList.add("solved");
-        }
         // Suppression des définitions expirées
         rq["expired"].forEach((n) => { 
             const div = document.getElementById(n);
             if (div !== null) { div.remove(); } 
         });
+        // La défintion est consommée
+        if (!(rq["pseudo"] === leader && !rq["accepted"] )) {
+            div.classList.add("solved");
+            const input = div.querySelector("input")
+            if (input !== null) { input.remove(); }
+            const button = div.querySelector("button")
+            if (button != null) { button.remove(); }
+        }
     },
 };

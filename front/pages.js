@@ -146,7 +146,7 @@ const pages = {
         </div>
         <div class="words" style="display: none;">
             <img src="./assets/img/lock.png" width="32px" height="32px">
-            <span class="word1"></span>
+            <span class="word1" style="display: none"></span>
             <span class="word2"></span>
         </div>
         <div class="leader" style="display: none;">
@@ -154,7 +154,7 @@ const pages = {
             <span></span>
         </div>
         <p class="definition">${rq["def"]}</p>`
-        if (rq["pseudo"] !== "pseudo") {
+        if (rq["pseudo"] !== pseudo) {
             div.innerHTML += `<input type="text" class="word_input" placeholder="${secret}">
             <button onclick="callbacks.contact(${rq["ndef"]})">${role === "leader" ? "Contre" : "Contact"}</button>`;
         }
