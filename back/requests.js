@@ -134,7 +134,7 @@ export function secret(rq, sg, sl) {
         sg.games[game]["secret"] = secret;
         // Diffusion à tous les joueurs de la première lettre
         res["game"] = game;
-        res["broadcast"] = {"type": "secret", "word": secret.slice(0,1)};
+        res["broadcast"] = {"type": "hint", "word": secret.slice(0,1)};
     }
     return res;
 }
@@ -208,7 +208,7 @@ export function contact(rq, sg, sl) {
             const secret = sg.games[game]["secret"].slice(0,letters);
             // TODO: Vider les numéros de définition dans "players" et faire repartir ndef = 0 ?
             console.log("< hint found", secret, ">");
-            res.push({"type": "secret", "word": secret});
+            res.push({"type": "hint", "word": secret});
             // Fin de partie si mot secret trouvé par contact entre détectives ou si toutes les lettres trouvées
             if (sg.games[game]["secret"] === word || sg.games[game]["secret"].length === sg.games[game]["letters"]) {
                 winner = "detective";

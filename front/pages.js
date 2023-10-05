@@ -67,6 +67,7 @@ const pages = {
 
     printSecret: function(secret) {
         const span = document.querySelector("#secret span");
+        span.innerHTML = "";
         for (let i = 0; i < secret.length; i++) {
             span.appendChild(createElement("span", {textContent: secret[i]}));
         }

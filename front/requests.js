@@ -65,16 +65,19 @@ const requests = {
         pages.endGame(rq["winner"] === "leader" ? `Le meneur ${leader} a gagné !` : "Les détectives ont gagné !");
     },
 
+    // Ajouter un nouveau joueur
     addPlayer: function(rq) {
         if (rq["pseudo"] !== pseudo) {
             pages.addPlayer(rq["pseudo"]);
         }
     },
 
+    // Supprimer un joueur
     removePlayer: function(rq) {
         pages.removePlayer(rq["pseudo"]);
     },
 
+    // Choisir un mot secret
     secret: function(rq) {
         // Validation du mot secret du meneur
         if (rq["accepted"]) {
@@ -82,21 +85,25 @@ const requests = {
             pages.foundLetters(1);
             // Démarrage du jeu
             pages.playGame();
-
         }
-        // Nouvel indice
+        // Mot secret invalide
         else {
-            secret = rq["word"];
-            document.querySelectorAll("#definition input.word_input").forEach((input) => {
-                input.setAttribute("placeholder", secret);
-            });
+            pages.invalidInput(document.getElementById("secret_input"));
+        }
+    },
 
-            if (role === "leader") {
-                pages.foundLetters(rq["word"].length);
-            }
-            else if (role === "detective") {
-                pages.printSecret(rq["word"]);
-            }
+    // Nouvel indice
+    hint: function(rq) {
+        secret = rq["word"];
+        document.querySelectorAll("#definition input.word_input").forEach((input) => {
+            input.setAttribute("placeholder", secret);
+        });
+
+        if (role === "leader") {
+            pages.foundLetters(rq["word"].length);
+        }
+        else if (role === "detective") {
+            pages.printSecret(rq["word"]);
         }
     },
 

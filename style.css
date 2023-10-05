@@ -197,13 +197,14 @@ div.definition button {
 }
 
 div.definition span {
-    background-color: darkblue;
-    color: white;
-    font-size: large;
-    padding-left: 5px;
+    display: inline-block;
+    vertical-align: middle;
     max-width: calc(50% - 45px);
     overflow: hidden;
     overflow-x: scroll;
+    background-color: darkblue;
+    color: white;
+    font-size: large;
     padding: 0px 5px;
 }
 
