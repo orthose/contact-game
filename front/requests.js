@@ -139,6 +139,9 @@ const requests = {
             div.classList.add("solved");
         }
         // Suppression des définitions expirées
-        rq["expired"].forEach((n) => { document.getElementById(n).remove(); });
+        rq["expired"].forEach((n) => { 
+            const div = document.getElementById(n);
+            if (div !== null) { div.remove(); } 
+        });
     },
 };
