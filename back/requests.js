@@ -189,6 +189,8 @@ export function contact(rq, sg, sl) {
     }
     
     if (role === "leader") {
+        // Le meneur ne peut effectuer que maximum 1 contre par défintion
+        sg.games[game]["players"][sl.pseudo].add(ndef);
         // En cas de contre du meneur réussi les détectives perdent un essai 
         if (isvalid) { sg.games[game]["ntry"]--; }
         // En cas de contre du meneur raté le mot de la définition n'est pas révélé
