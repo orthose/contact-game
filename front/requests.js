@@ -29,6 +29,7 @@ const requests = {
             document.querySelector("#game").style = "display: block";
             document.querySelector("#game span").textContent = game;
             // Affichage du nombre d'essais restants
+            document.querySelector("#ntry").style = "display: block";
             pages.printLifes(rq["ntry"]);
             // Affichage du mot secret ou indice si déjà renseigné
             if (rq["secret"]) {
@@ -52,8 +53,10 @@ const requests = {
 
     // Quitter la partie
     quitGame: function(rq) {
-        game = ""; role = ""; leader = "";
-        // TODO: Nettoyer les balises d'information du header
+        // Nettoyer les balises d'information du header
+        pages.quitGame();
+        game = ""; role = ""; leader = ""; secret = "";
+        // Retour à la page de choix de partie
         pages.chooseGame();
     },
 

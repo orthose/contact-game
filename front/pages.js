@@ -25,7 +25,28 @@ const pages = {
         }));
     },
 
+    quitGame: function() {
+        if (leader) { pages.removeLeaderStar(); }
+        const game = document.getElementById("game");
+        game.querySelector("span").innerHTML = "";
+        game.style = "display: none";
+        const secret = document.getElementById("secret");
+        secret.querySelector("span").innerHTML = "";
+        secret.style = "display: none";
+        const ntry = document.getElementById("ntry");
+        ntry.innerHTML = "";
+        ntry.style = "display: none";
+        const players = document.querySelectorAll("#players ul li");
+        for (let i = 1; i < players.length; i++) {
+            players[i].remove();
+        }
+    },
+
     chooseGame: function() {
+        pages.quitGame();
+        const quit = document.getElementById("quit");
+        quit.style = "display: float";
+        quit.onclick = callbacks.unregister;
         const main = document.querySelector("main");
         main.innerHTML = "";
 
@@ -53,6 +74,8 @@ const pages = {
     },
 
     chooseSecret: function() {
+        const quit = document.getElementById("quit");
+        quit.onclick = callbacks.quitGame;
         const main = document.querySelector("main");
         main.innerHTML = "";
 
@@ -82,6 +105,8 @@ const pages = {
     },
 
     playGame: function() {
+        const quit = document.getElementById("quit");
+        quit.onclick = callbacks.quitGame;
         const main = document.querySelector("main");
         main.innerHTML = "";
 
@@ -97,10 +122,6 @@ const pages = {
             main.appendChild(createElement("button", {
                 textContent: "Envoyer",
                 onclick: callbacks.definition,
-            }));
-            main.appendChild(createElement("button", {
-                textContent: "Quitter",
-                onclick: callbacks.quitGame,
             }));
         }
     },
@@ -132,10 +153,6 @@ const pages = {
     removePlayer: function(player) {
         document.querySelector(`#players ul li#${player}`).remove();
     },
-
-    /*emptyPlayers: function() {
-        document.getElementById("players").innerHTML = "";
-    },*/
 
     addDefinition: function(rq) {
         const div = createElement("div", {id: rq["ndef"], className: "definition"});

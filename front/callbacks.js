@@ -7,6 +7,8 @@ const callbacks = {
     unregister: function() {
         pseudo = ""; game = ""; role = ""; leader = "";
         send({"type": "unregister"});
+        // Redémarrage d'un nouveau socket
+        location.reload();
     },
     
     joinGame: function() {
