@@ -86,17 +86,12 @@ const pages = {
 
         main.appendChild(createElement("div", {id: "definition"}));
         if (role === "detective") {
-            main.appendChild(createElement("label", {
-                textContent: "Mot", for: "word_input",
-            }));
             main.appendChild(createElement("input", {
-                type: "text", id: "word_input",
+                type: "text", id: "word_input", placeholder: "Chocolat",
             }));
-            main.appendChild(createElement("label", {
-                textContent: "Définition", for: "def_input",
-            }));
-            main.appendChild(createElement("input", {
-                type: "text", id: "def_input",
+            main.appendChild(createElement("textarea", {
+                id: "def_input", placeholder: 
+                "Aliment composé de cacao et de sucre.",
             }));
             main.appendChild(createElement("button", {
                 textContent: "Envoyer",
@@ -142,12 +137,26 @@ const pages = {
     },*/
 
     addDefinition: function(rq) {
-        const div = createElement("div", {id: rq["ndef"], onclick: callbacks.contact});
-        div.appendChild(createElement("p", {className: "author", textContent: rq["pseudo"]}));
-        div.appendChild(createElement("p", {className: "searcher"}));
-        div.appendChild(createElement("p", {className: "word"}));
-        div.appendChild(createElement("p", {className: "contact"}));
-        div.appendChild(createElement("p", {className: "definition", textContent: rq["def"]}));
+        const div = createElement("div", {id: rq["ndef"], className: "definition"});
+        div.innerHTML = `<div class="players">
+            <img src="./assets/img/player.png" width="32px" height="32px">
+            <span class="author">${rq["pseudo"]}</span>
+            <span class="searcher"></span>
+        </div>
+        <div class="words" style="display: none;">
+            <img src="./assets/img/lock.png" width="32px" height="32px">
+            <span class="word1"></span>
+            <span class="word2"></span>
+        </div>
+        <div class="leader" style="display: none;">
+            <img src="./assets/img/star.png" width="32px" height="32px">
+            <span></span>
+        </div>
+        <p class="definition">${rq["def"]}</p>`
+        if (rq["pseudo"] !== "pseudo") {
+            div.innerHTML += `<input type="text" class="word_input" placeholder="${secret}">
+            <button onclick="callbacks.contact(${rq["ndef"]})">${role === "leader" ? "Contre" : "Contact"}</button>`;
+        }
         document.getElementById("definition").appendChild(div);
     },
 };

@@ -26,11 +26,15 @@ const callbacks = {
     definition: function() {
         const word = document.getElementById("word_input").value;
         const def = document.getElementById("def_input").value;
-        if (word && def) { send({"type": "definition", "def": def, "word": word}); }
+        if (word && def) {
+            document.getElementById("word_input").value = "";
+            document.getElementById("def_input").value = "";
+            send({"type": "definition", "def": def, "word": word}); 
+        }
     },
     
-    contact: function() {
-        const word = document.getElementById("word_input").value;
-        if (word) { send({"type": "contact", "word": word, "ndef": parseInt(this.id)}); }
+    contact: function(ndef) {
+        const word = document.querySelector(`#definition div[id="${ndef}"] input.word_input`).value;
+        if (word) { send({"type": "contact", "word": word, "ndef": parseInt(ndef)}); }
     },
 };

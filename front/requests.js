@@ -31,7 +31,10 @@ const requests = {
             // Affichage du nombre d'essais restants
             pages.printLifes(rq["ntry"]);
             // Affichage du mot secret ou indice si déjà renseigné
-            if (rq["secret"]) { pages.printSecret(rq["secret"]); }
+            if (rq["secret"]) {
+                secret = rq["secret"]; 
+                pages.printSecret(rq["secret"]); 
+            }
             // Affichage des joueurs
             pages.listPlayers(rq["players"]);
             if (leader) { pages.addLeaderStar(); }
@@ -82,11 +85,18 @@ const requests = {
 
         }
         // Nouvel indice
-        else if (role === "leader") {
-            pages.foundLetters(rq["word"].length);
-        }
-        else if (role === "detective") {
-            pages.printSecret(rq["word"]);
+        else {
+            secret = rq["word"];
+            document.querySelectorAll("#definition input.word_input").forEach((input) => {
+                input.setAttribute("placeholder", secret);
+            });
+
+            if (role === "leader") {
+                pages.foundLetters(rq["word"].length);
+            }
+            else if (role === "detective") {
+                pages.printSecret(rq["word"]);
+            }
         }
     },
 
@@ -101,26 +111,32 @@ const requests = {
 
     // Recevoir un contact
     contact: function(rq) {
-        const word1 = rq["word1"];
-        const word2 = rq["word2"];
         const div = document.querySelector(`#definition div[id="${rq["ndef"]}"]`);
-        div.querySelector("p.searcher").textContent = rq["pseudo"];
-        div.querySelector("p.word").textContent = word1;
-        div.querySelector("p.contact").textContent = word2;
         pages.printLifes(rq["ntry"]);
-        if (rq["accepted"]) {
-            // Contre du meneur
-            if (rq["pseudo"] === leader) {
-                div.className = "success-leader";
-            }
-            // Contact réussi 
-            else {
-                div.className = "success";
-            }
+        // Contre du meneur
+        let spanWord = null;
+        if (rq["pseudo"] === leader) {
+            const divLeader = div.querySelector("div.leader");
+            divLeader.style = "display: block";
+            divLeader.querySelector("span").textContent = rq["word2"];
+            spanWord = divLeader.querySelector("span");
         }
-        // Contact ou contre échoué 
+        // Contact réussi 
         else {
-            div.className = "fail";
+            div.querySelector("span.searcher").textContent = rq["pseudo"];
+            div.querySelector("div.words").style = "display: block";
+            div.querySelector("span.word1").textContent = rq["word1"];
+            spanWord = div.querySelector("span.word2");
+        }
+        Object.assign(spanWord, {
+            textContent: rq["word2"],
+            className: rq["accepted"] ? "success" : "fail",
+        });
+        // La défintion est consommée
+        if (!(rq["pseudo"] === leader && !rq["accepted"] )) {
+            div.querySelector("input").remove();
+            div.querySelector("button").remove();
+            div.classList.add("solved");
         }
         // Suppression des définitions expirées
         rq["expired"].forEach((n) => { document.getElementById(n).remove(); });

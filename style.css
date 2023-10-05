@@ -40,40 +40,43 @@ h1 {
     text-align: center;
 }
 
-/*div {
-    border: 1px solid black;
-}*/
-
 button, input {
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
     border-radius: 0px;
 }
 
-input {
+input, textarea {
     box-sizing: border-box;
     width: 100%;
     height: 35px;
-    margin: 10px 0;
+    margin-top: 0px;
+    margin-bottom: 10px;
     font-size: x-large;
     border: solid 2px darkblue;
     color: darkblue;
 }
 
-input::placeholder {
+input::placeholder, textarea:placeholder {
     color: darkblue;
     opacity: 0.5;
 }
 
-input:focus {
+input:focus, textarea:focus {
     outline: none;
+}
+
+textarea {
+    resize: vertical;
+    font-size: normal;
+    min-height: 70px;
 }
 
 button {
     display: block;
     width: auto;
     line-height: 0;
-    margin-top: 30px;
+    margin-top: 15px;
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
@@ -130,6 +133,11 @@ li.leader {
 div#game span {
     background-color: darkblue;
     color: white;
+    max-width: calc(100% - 95px);
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    overflow-x: scroll;
     margin-left: 5px;
     padding: 5px 10px;
 }
@@ -141,7 +149,7 @@ div#game {
 div#secret > span {
     display: inline-block;
     vertical-align: middle;
-    width: calc(100% - 75px);;
+    width: calc(100% - 75px);
     margin-left: 5px;
 }
 
@@ -163,14 +171,50 @@ div#secret span.found {
     color: aqua;
 }
 
-.success-leader {
-    border-color: blue;
+div.definition {
+    border: solid 2px darkblue;
+    padding: 5px 5px;
+    margin-bottom: 10px;
 }
 
-.success {
-    border-color: green;
+div.definition :is(div, p, input, button) {
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
-.fail {
-    border-color: red;
+div.definition p {
+    font-size: large;
+}
+
+div.definition input {
+    width: calc(100% - 100px)
+}
+
+div.definition button {
+    display: inline-block;
+    padding: 0px 5px;
+    height: 35px;
+}
+
+div.definition span {
+    background-color: darkblue;
+    color: white;
+    font-size: large;
+    padding-left: 5px;
+    max-width: calc(50% - 45px);
+    overflow: hidden;
+    overflow-x: scroll;
+    padding: 0px 5px;
+}
+
+div.definition span.success {
+    background-color: green;
+}
+
+div.definition span.fail {
+    background-color: red;
+}
+
+div.definition.solved {
+    background-color: rgba(175,238,238, 0.3);
 }
