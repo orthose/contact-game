@@ -120,7 +120,7 @@ export function quitGame(rq, sg, sl) {
 
 // Proposer un mot secret
 export function secret(rq, sg, sl) {
-    const secret = rq["word"];
+    const secret = rq["word"].toUpperCase();
     const game = sg.players[sl.pseudo]["game"];
     //const role = getRole(sg, sl);
     // TODO: Vérifier la validité du mot dans le dictionnaire
@@ -142,7 +142,7 @@ export function secret(rq, sg, sl) {
 // Proposer une défintion
 export function definition(rq, sg, sl) {
     const def = rq["def"];
-    const word = rq["word"];
+    const word = rq["word"].toUpperCase();
     const game = sg.players[sl.pseudo]["game"];
     const ndef = sg.games[game]["ndef"];
     // TODO: Vérifier que la définition ne contient pas le mot proposé ou une racine
@@ -168,6 +168,7 @@ export function contact(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     const ndef = rq["ndef"];
+    rq["word"] = rq["word"].toUpperCase();
     
     // Les mots correspondent-ils ?
     let isvalid = sg.games[game]["def"][ndef] === rq["word"];
