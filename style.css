@@ -256,6 +256,8 @@ div#end_game span {
 
 p.error {
     background-color: rgba(255,0,0,0.7);
+    text-align: left;
+    font-size: large;
     color: white;
     padding: 5px 10px;
 }

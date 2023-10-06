@@ -6,9 +6,10 @@ ws.onclose = function(ev) {
     console.log("Connexion perdue...");
     document.querySelector("body").innerHTML = 
     `<p class="error">
-    OUPS ! 😲 <br><br>
-    La connexion a été interrompue de manière inopinée 📶 <br><br>  
-    Le serveur est probablement en maintenance 🚧</p>
+    OUPS&nbsp;!&nbsp;😲<br><br>
+    La connexion a été interrompue de manière inopinée&nbsp;📶<br><br>
+    Le serveur est probablement en maintenance&nbsp;🚧<br><br>
+    Revenez plus tard&nbsp;🕐</p>
     <button onclick="location.reload()">Recharger</button>`;
 };
 
