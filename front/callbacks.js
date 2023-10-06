@@ -5,8 +5,6 @@ const callbacks = {
     },
     
     unregister: function() {
-        // Inutile de réinitialiser ces variables si on recharge la page
-        pseudo = ""; game = ""; role = ""; leader = "";
         send({"type": "unregister"});
         // Redémarrage d'un nouveau socket
         location.reload();

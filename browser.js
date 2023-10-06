@@ -4,7 +4,6 @@ const send = (json) => ws.send(JSON.stringify(json));
 
 ws.onclose = function(ev) {
     console.log("Connexion perdue...");
-    pseudo = ""; // Inutile si on recharge la page
     document.querySelector("body").innerHTML = 
     `<p class="error">
     OUPS ! 😲 <br><br>

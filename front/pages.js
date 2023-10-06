@@ -18,7 +18,6 @@ const pages = {
     register: function() {
         const main = document.querySelector("main");
         main.innerHTML = "";
-
         main.appendChild(createElement("input", {
             type: "text", id: "pseudo_input", placeholder: "Pseudo",
         }));
@@ -30,8 +29,6 @@ const pages = {
     },
 
     quitGame: function() {
-        console.log(2);
-        if (leader) { pages.removeLeaderStar(); }
         const game = document.getElementById("game");
         game.querySelector("span").innerHTML = "";
         game.style = "display: none";
@@ -41,20 +38,15 @@ const pages = {
         const ntry = document.getElementById("ntry");
         ntry.innerHTML = "";
         ntry.style = "display: none";
-        const players = document.querySelectorAll("#players ul li");
-        for (let i = 1; i < players.length; i++) {
-            players[i].remove();
-        }
+        pages.listPlayers();
     },
 
     chooseGame: function() {
-        pages.quitGame();
         const quit = document.getElementById("quit");
         quit.style = "display: float";
         quit.onclick = callbacks.unregister;
         const main = document.querySelector("main");
         main.innerHTML = "";
-
         main.appendChild(createElement("input", {
             type: "text", id: "game_input", placeholder: "Salle",
         }));
@@ -62,16 +54,6 @@ const pages = {
             textContent: "Rejoindre", 
             onclick: callbacks.joinGame,
         }));
-    },
-
-    addLeaderStar: function() {
-        const li = document.querySelector(`#players li#${leader}`);
-        if (li !== null) { li.textContent = "⭐ " + li.textContent; }
-    },
-
-    removeLeaderStar: function() {
-        const li = document.querySelector(`#players li#${leader}`);
-        if (li !== null) { li.textContent = li.textContent.slice(2); }
     },
 
     printLifes: function(ntry) {
@@ -83,7 +65,6 @@ const pages = {
         quit.onclick = callbacks.quitGame;
         const main = document.querySelector("main");
         main.innerHTML = "";
-
         main.appendChild(createElement("input", {
             type: "text", id: "secret_input", placeholder: "Mot Secret",
         }));
@@ -114,7 +95,6 @@ const pages = {
         quit.onclick = callbacks.quitGame;
         const main = document.querySelector("main");
         main.innerHTML = "";
-
         main.appendChild(createElement("div", {id: "definition"}));
         if (role === "detective") {
             main.appendChild(createElement("input", {
@@ -159,19 +139,21 @@ const pages = {
         removeElement(document.getElementById("send_def"));
     },
 
-    listPlayers: function(players) {
-        players.forEach(p => {
-            if (p !== pseudo) { pages.addPlayer(p) }
-        });
-    },
-
-    addPlayer: function(player) {
+    listPlayers: function() {
+        function createPlayer(player) {
+            if (player === leader) { player = "⭐ " + player; }
+            return createElement("li", {id: player, textContent: player});
+        }
         const ul = document.querySelector("#players ul");
-        ul.appendChild(createElement("li", {id: player, textContent: player}));
-    },
-
-    removePlayer: function(player) {
-        document.querySelector(`#players ul li#${player}`).remove();
+        ul.innerHTML = "";
+        // Affichage du pseudo du joueur
+        ul.appendChild(Object.assign(createPlayer(pseudo), {className: "mypseudo"}));
+        // Affichage des adversaires
+        const opponents = new Set(players);
+        opponents.delete(pseudo);
+        players.forEach(p => {
+            if (p !== pseudo) { ul.appendChild(createPlayer(p)); }
+        });
     },
 
     addDefinition: function(rq) {

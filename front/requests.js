@@ -4,7 +4,7 @@ const requests = {
         if (rq["accepted"]) {
             pseudo = rq["pseudo"]
             // Affichage du pseudo
-            pages.addPlayer(pseudo);
+            pages.listPlayers();
             document.querySelector("#players").style = "display: block";
             document.querySelector("#players li").classList.add("mypseudo");
             // Formulaire de création de partie
@@ -19,11 +19,10 @@ const requests = {
         // Rejoindre une salle
         // Pas de champ accepted si changement de meneur
         if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
-            console.log(1, leader);
-            pages.quitGame();
-            console.log(3);
+            requests.quitGame();
             game = rq["game"];
             leader = rq["leader"];
+            players = new Set(rq["players"]);
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
             document.querySelector("#game").style = "display: block";
@@ -37,8 +36,7 @@ const requests = {
                 pages.printSecret(rq["secret"]); 
             }
             // Affichage des joueurs
-            pages.listPlayers(rq["players"]);
-            if (leader) { pages.addLeaderStar(); }
+            pages.listPlayers();
 
             // Formulaire de choix du mot secret
             if (role === "leader") { pages.chooseSecret(); }
@@ -53,9 +51,9 @@ const requests = {
 
     // Quitter la partie
     quitGame: function(rq) {
+        game = ""; role = ""; players = new Set(); leader = ""; secret = "";
         // Nettoyer les balises d'information du header
         pages.quitGame();
-        game = ""; role = ""; leader = ""; secret = "";
         // Retour à la page de choix de partie
         pages.chooseGame();
     },
@@ -76,14 +74,14 @@ const requests = {
 
     // Ajouter un nouveau joueur
     addPlayer: function(rq) {
-        if (rq["pseudo"] !== pseudo) {
-            pages.addPlayer(rq["pseudo"]);
-        }
+        players.add(rq["pseudo"]);
+        pages.listPlayers();
     },
 
     // Supprimer un joueur
     removePlayer: function(rq) {
-        pages.removePlayer(rq["pseudo"]);
+        players.delete(rq["pseudo"]);
+        pages.listPlayers();
     },
 
     // Choisir un mot secret
