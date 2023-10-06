@@ -1,3 +1,8 @@
+/**
+ * Fonctions à appeler en réponse des messages de requêtes du serveur
+ * Elles peuvent modifier les variables globales
+ * mais ne doivent pas en principe modifier directement le DOM 
+ */
 const requests = {
     // Enregistrer le joueur
     register: function(rq) {

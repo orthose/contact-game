@@ -1,11 +1,18 @@
+// Création d'une balise et de ses attributs en une ligne
 function createElement(tagName, kwargs={}) {
     return Object.assign(document.createElement(tagName), kwargs);
 }
 
+// Suppression d'une balise si sélecteur non null
 function removeElement(tag) {
     if (tag !== null) { tag.remove(); }
 }
 
+/**
+ * Fonctions de modification du DOM
+ * Elles ne doivent pas modifier les variables globales 
+ * mais peuvent les consulter
+ */
 const pages = {
     invalidInput: function(input) {
         input.classList.add("invalid");

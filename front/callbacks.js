@@ -1,3 +1,9 @@
+/**
+ * Fonctions à attacher aux boutons pour envoyer des requêtes au serveur
+ * Elles ne doivent pas modifier les variables globales 
+ * mais peuvent les consulter
+ * Elles doivent vérifier que les données textuelles envoyées ne sont pas vides
+ */
 const callbacks = {
     register: function() {
         const pseudo = document.getElementById("pseudo_input").value;
