@@ -73,6 +73,10 @@ const requests = {
             pages.printSecret(rq["word"]);
         }
         pages.endGame(rq["winner"]);
+        // Nécessaire pour ne pas avoir une ancienne version lors de l'appel à joinGame
+        // si des joueurs sont partis ou entrés entre temps
+        players = new Set(rq["players"]);
+        rq["players"] = players;
         // Manche suivante d'une partie
         pages.nextRound(rq);
     },
