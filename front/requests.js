@@ -121,8 +121,13 @@ const requests = {
 
     // Recevoir une définition
     definition: function(rq) {
-        if (rq.hasOwnProperty("accepted") && !rq["accepted"]) {
-            alert(`La définition pour le mot ${rq["word"]} a été refusée.`);
+        if (rq.hasOwnProperty("accepted")) {
+            if (rq["accepted"]) {
+                document.getElementById("word_input").value = "";
+                document.getElementById("def_input").value = "";
+            } else {
+                pages.invalidInput(document.getElementById("word_input"));
+            }
         } else {
             pages.addDefinition(rq); 
         }

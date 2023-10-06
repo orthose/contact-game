@@ -149,6 +149,7 @@ export function secret(rq, sg, sl) {
 
 // Proposer une défintion
 export function definition(rq, sg, sl) {
+    const res = {};
     const def = rq["def"];
     const word = rq["word"].toUpperCase();
     const game = sg.players[sl.pseudo]["game"];
@@ -164,10 +165,12 @@ export function definition(rq, sg, sl) {
         sg.games[game]["ndef"]++;
         // Diffusion à tous les joueurs de la partie
         // Les messages de diffusion n'ont pas de champ "accepted"
-        return {"broadcast": {"type": "definition", "def": def, "pseudo": sl.pseudo, "ndef": ndef}, "game": game};
+        res["game"] = game;
+        res["broadcast"] = {"type": "definition", "def": def, "pseudo": sl.pseudo, "ndef": ndef};
     }
-    // Définition refusée
-    return {"send": {"type": "definition", "def": def, "word": word, "ndef": ndef, "accepted": false}};
+    // Définition acceptée ou refusée
+    res["send"] = {"type": "definition", "word": word, "ndef": ndef, "accepted": isvalid};
+    return res;
 }
 
 // Résoudre un contact

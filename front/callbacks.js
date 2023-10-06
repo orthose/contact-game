@@ -34,8 +34,6 @@ const callbacks = {
         const word = document.getElementById("word_input").value;
         const def = document.getElementById("def_input").value;
         if (word && def) {
-            document.getElementById("word_input").value = "";
-            document.getElementById("def_input").value = "";
             send({"type": "definition", "def": def, "word": word}); 
         }
     },
