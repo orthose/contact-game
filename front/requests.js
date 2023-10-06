@@ -18,7 +18,7 @@ const requests = {
     joinGame: function(rq) {
         // Manche suivante d'une partie
         if (!rq.hasOwnProperty("accepted")) {
-            pages.nextRound();
+            pages.nextRound(rq);
         }
         // Rejoindre une salle
         else if (rq["accepted"]) {
@@ -62,10 +62,14 @@ const requests = {
 
     // Fin de partie
     endGame: function(rq) {
-        if (role === "detective") {
-            document.getElementById("secret").textContent = rq["word"];
+        secret = rq["word"];
+        if (role === "leader") {
+            pages.foundLetters(rq["word"].length);
         }
-        pages.endGame(rq["winner"] === "leader" ? `Le meneur ${leader} a gagné !` : "Les détectives ont gagné !");
+        else if (role === "detective") {
+            pages.printSecret(rq["word"]);
+        }
+        pages.endGame(rq["winner"]);
     },
 
     // Ajouter un nouveau joueur

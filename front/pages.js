@@ -2,6 +2,10 @@ function createElement(tagName, kwargs={}) {
     return Object.assign(document.createElement(tagName), kwargs);
 }
 
+function removeElement(tag) {
+    if (tag !== null) { tag.remove(); }
+}
+
 const pages = {
     invalidInput: function(input) {
         input.classList.add("invalid");
@@ -120,23 +124,38 @@ const pages = {
                 "Aliment composé de cacao et de sucre.",
             }));
             main.appendChild(createElement("button", {
-                textContent: "Envoyer",
+                id: "send_def", textContent: "Envoyer",
                 onclick: callbacks.definition,
             }));
         }
     },
 
-    nextRound: function() {
+    nextRound: function(rq) {
+        rq["accepted"] = true;
         const main = document.querySelector("main");
         main.appendChild(createElement("button", {
             textContent: "Continuer",
-            //onclick: ...,
+            onclick: () => { requests.joinGame(rq); },
         }));
     },
 
-    endGame: function(msg) {
-        const main = document.querySelector("main");
-        main.appendChild(createElement("p", {textContent: msg}));
+    endGame: function(winner) {
+        let className = ""; let src = ""; let msg = "";
+        if (winner === role) {
+            className = "winner";
+            src = "./assets/img/trophy.png";
+            msg = "GAGNÉ&nbsp;!";
+        } else {
+            className = "looser";
+            src = "./assets/img/death.png";
+            msg = "PERDU&nbsp;!";
+        }
+        const div = createElement("div", {id: "end_game", className: className});
+        div.innerHTML = `<img src="${src}"><span>${msg}</span>`;
+        document.querySelector("main").appendChild(div);
+        removeElement(document.getElementById("word_input"));
+        removeElement(document.getElementById("def_input"));
+        removeElement(document.getElementById("send_def"));
     },
 
     listPlayers: function(players) {

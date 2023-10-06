@@ -8,6 +8,10 @@
     h1 {
         font-size: 12vw;
     }
+    
+    div#end_game span {
+        font-size: 15vw;
+    }
 }
   
 /* Ordinateur taille maximale de 500px */
@@ -21,6 +25,10 @@
 
     h1 {
         font-size: 60px;
+    }
+    
+    div#end_game span {
+        font-size: 85px;
     }
 }
 
@@ -226,5 +234,26 @@ div.definition span.fail {
 }
 
 div.definition.solved {
-    background-color: rgba(175,238,238, 0.3);
+    background-color: rgba(175,238,238,0.3);
+}
+
+div#end_game {
+    border-radius: 15px;
+    padding: 10px 20px;
+}
+
+div#end_game.winner {
+    background-color: rgba(255,255,0,0.3);
+    color: #f29b0f;
+}
+
+div#end_game.looser {
+    background-color: rgba(0,0,139,0.6);
+    color: white;
+}
+
+div#end_game span {
+    max-width: calc(100% - 150px);
+    display: inline-block;
+    vertical-align: middle;
 }
