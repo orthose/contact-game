@@ -122,6 +122,7 @@ const requests = {
     // Recevoir une définition
     definition: function(rq) {
         if (rq.hasOwnProperty("accepted")) {
+            document.getElementById("word_input").classList.remove("invalid");
             if (rq["accepted"]) {
                 document.getElementById("word_input").value = "";
                 document.getElementById("def_input").value = "";
