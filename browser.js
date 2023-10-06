@@ -5,9 +5,12 @@ const send = (json) => ws.send(JSON.stringify(json));
 ws.onclose = function(ev) {
     console.log("Connexion perdue...");
     pseudo = ""; // Inutile si on recharge la page
-    // Revenir à la page d'accueil
-    location.reload();
-    //pages.register();
+    document.querySelector("body").innerHTML = 
+    `<p class="error">
+    OUPS ! 😲 <br><br>
+    La connexion a été interrompue de manière inopinée 📶 <br><br>  
+    Le serveur est probablement en maintenance 🚧</p>
+    <button onclick="location.reload()">Recharger</button>`;
 };
 
 // Réception des messages du serveur

@@ -257,3 +257,9 @@ div#end_game span {
     display: inline-block;
     vertical-align: middle;
 }
+
+p.error {
+    background-color: rgba(255,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+}
