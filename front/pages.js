@@ -65,12 +65,12 @@ const pages = {
 
     addLeaderStar: function() {
         const li = document.querySelector(`#players li#${leader}`);
-        li.textContent = "⭐ " + li.textContent;
+        if (li !== null) { li.textContent = "⭐ " + li.textContent; }
     },
 
     removeLeaderStar: function() {
         const li = document.querySelector(`#players li#${leader}`);
-        li.textContent = li.textContent.slice(2);
+        if (li !== null) { li.textContent = li.textContent.slice(2); }
     },
 
     printLifes: function(ntry) {

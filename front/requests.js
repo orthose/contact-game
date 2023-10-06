@@ -151,17 +151,14 @@ const requests = {
             className: rq["accepted"] ? "success" : "fail",
         });
         // Suppression des définitions expirées
-        rq["expired"].forEach((n) => { 
-            const div = document.getElementById(n);
-            if (div !== null) { div.remove(); } 
+        rq["expired"].forEach((n) => {
+            removeElement(document.getElementById(n));
         });
         // La défintion est consommée
         if (!(rq["pseudo"] === leader && !rq["accepted"] )) {
             div.classList.add("solved");
-            const input = div.querySelector("input")
-            if (input !== null) { input.remove(); }
-            const button = div.querySelector("button")
-            if (button != null) { button.remove(); }
+            removeElement(div.querySelector("input"));
+            removeElement(div.querySelector("button"));
         }
     },
 };
