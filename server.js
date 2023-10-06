@@ -1,8 +1,9 @@
+import { config } from "./back/config.js";
 import { players, games } from "./back/data.js";
 import { requests, onclose } from "./back/requests.js";
 import { WebSocket, WebSocketServer } from 'ws';
 
-const wss = new WebSocketServer({port: 8080});
+const wss = new WebSocketServer({port: config["port"]});
 
 // Scope global du serveur
 const sg = {players: players, games: games}

@@ -20,14 +20,17 @@
  */
 
 import { getRole } from "./data.js";
+import * as checks from "./checks.js";
+import { htmlspecialchars } from "./utils.js";
 
 // Enregistrer un nouveau joueur lors de sa première connexion
 export function register(rq, sg, sl) {
     // Le joueur ne doit pas déjà être enregistré
-    const isvalid = (sl.pseudo === "" && !sg.players.hasOwnProperty(rq["pseudo"]))
-    // Vérification que le joueur est bien enregistré
-    || sl.pseudo === rq["pseudo"];
-    
+    const isvalid = (
+        // Le joueur n'est pas enregistré
+        sl.pseudo === "" && !sg.players.hasOwnProperty(rq["pseudo"])
+        && checks.inputIsValid(rq["pseudo"])
+    );
     if (isvalid) {
         sl.pseudo = rq["pseudo"];
         console.log("<", sl.pseudo, "registered >");
@@ -45,9 +48,12 @@ export function unregister(rq, sg, sl) {
 // Rejoindre ou créer une partie
 export function joinGame(rq, sg, sl) {
     const game = rq["game"];
-    // Le joueur ne peut participer qu'à une partie à la fois
-    // Il doit quitter sa partie actuelle avant d'en rejoindre une autre
-    const isvalid = sg.players[sl.pseudo]["game"] === "";
+    const isvalid = (
+        // Le joueur ne peut participer qu'à une partie à la fois
+        // Il doit quitter sa partie actuelle avant d'en rejoindre une autre
+        sg.players[sl.pseudo]["game"] === ""
+        && checks.inputIsValid(rq["game"])
+    );
 
     if (isvalid) {
         // Création d'une nouvelle partie
@@ -123,11 +129,8 @@ export function quitGame(rq, sg, sl) {
 export function secret(rq, sg, sl) {
     const secret = rq["word"].toUpperCase();
     const game = sg.players[sl.pseudo]["game"];
-    //const role = getRole(sg, sl);
-    // TODO: Vérifier la validité du mot dans le dictionnaire
-    const isvalid = true;
-    /*const isvalid = role === "leader" && game !== ""
-        && sg.games.hasOwnProperty(game) && sg.games[game]["secret"] === "";*/
+    // Le mot est-il dans le dictionnaire ?
+    const isvalid = checks.wordExists(secret);
     // Informe le meneur si le mot est validé ou non
     const res = {"send": {"type": "secret", "word": secret, "accepted": isvalid}};
     if (isvalid) {
@@ -143,14 +146,20 @@ export function secret(rq, sg, sl) {
 // Proposer une défintion
 export function definition(rq, sg, sl) {
     const res = {};
-    const def = rq["def"];
+    const def = htmlspecialchars(rq["def"]);
     const word = rq["word"].toUpperCase();
     const game = sg.players[sl.pseudo]["game"];
     const ndef = sg.games[game]["ndef"];
-    // TODO: Vérifier que la définition ne contient pas le mot proposé ou une racine
-    // TODO: Vérifier que le mot est dans le dictionnaire
-    const isvalid = word.startsWith(sg.games[game]["secret"].slice(0, sg.games[game]["letters"]))
-        && !sg.games[game]["words"].has(word);
+    const isvalid = (
+        // Le mot mystère doit commencer par les lettres du mot indice
+        word.startsWith(sg.games[game]["secret"].slice(0, sg.games[game]["letters"]))
+        // Le mot mystère ne doit pas avoir déjà été consommé
+        && !sg.games[game]["words"].has(word)
+        // La définition ne contient pas le mot proposé
+        && checks.definitionIsValid(word, def)
+        // Le mot mystère est-il dans le dictionnaire ?
+        && checks.wordExists(word)
+    );
     if (isvalid) {
         console.log("< definition", ndef, "for", word, ">");
         sg.games[game]["players"][sl.pseudo].add(ndef);
