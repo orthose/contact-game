@@ -45,18 +45,11 @@ export function unregister(rq, sg, sl) {
 // Rejoindre ou créer une partie
 export function joinGame(rq, sg, sl) {
     const game = rq["game"];
-    let isvalid = false;
-
-    // Le joueur participe déjà à cette partie
-    if (sg.players[sl.pseudo]["game"] === game) {
-        isvalid = true;
-    }
-
     // Le joueur ne peut participer qu'à une partie à la fois
     // Il doit quitter sa partie actuelle avant d'en rejoindre une autre
-    else if (sg.players[sl.pseudo]["game"] === "") {
-        isvalid = true;
+    const isvalid = sg.players[sl.pseudo]["game"] === "";
 
+    if (isvalid) {
         // Création d'une nouvelle partie
         if (!sg.games.hasOwnProperty(game)) {
             console.log("< game", game, "created by", sl.pseudo, ">");
@@ -65,25 +58,25 @@ export function joinGame(rq, sg, sl) {
                 "leader": sl.pseudo, "players": {[sl.pseudo]: new Set()}
             };
         }
-
         // La partie existe déjà 
         else {
             console.log("<", sl.pseudo, "joined", game, ">");
             sg.games[game]["players"][sl.pseudo] = new Set();
         }
         sg.players[sl.pseudo]["game"] = game;
-    }
 
-    if (isvalid) {
         const ntry = sg.games[game]["ntry"];
         const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
         const leader = sg.games[game]["leader"];
+        // Informations de la partie transmises au joueur
         return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
-        "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid}, 
+        "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid},
+        // Diffusion du nouvel arrivant aux autres joueurs de la partie
         "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}, "game": game};
-    } else {
-        return {"send": {"type": "joinGame", "game": game, "accepted": isvalid}};
     }
+
+    // Accès à la partie refusé
+    return {"send": {"type": "joinGame", "game": game, "accepted": isvalid}};
 }
 
 // Quitter la partie en cours
