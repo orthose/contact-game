@@ -105,11 +105,11 @@ const pages = {
         main.appendChild(createElement("div", {id: "definition"}));
         if (role === "detective") {
             main.appendChild(createElement("input", {
-                type: "text", id: "word_input", placeholder: "Chocolat",
+                type: "text", id: "word_input", placeholder: config["exampleWord"],
             }));
             main.appendChild(createElement("textarea", {
                 id: "def_input", placeholder: 
-                "Aliment composé de cacao et de sucre.",
+                config["exampleDef"],
             }));
             main.appendChild(createElement("button", {
                 id: "send_def", textContent: "Envoyer",
