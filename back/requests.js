@@ -107,6 +107,7 @@ export function quitGame(rq, sg, sl) {
         // Alors on désigne un nouveau meneur
         if (role === "leader" && sg.games[game]["secret"] === "") {
             const nextLeader = Object.keys(sg.games[game]["players"])[0];
+            sg.games[game]["leader"] = nextLeader;
             res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
             "players": Object.keys(sg.games[game]["players"])});
         }
