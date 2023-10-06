@@ -98,11 +98,18 @@ export function quitGame(rq, sg, sl) {
 
     // Tous les joueurs ont quitté la partie
     if (Object.keys(sg.games[game]["players"]).length === 0) {
+        console.log("< game", game, "deleted >");
         delete sg.games[game];
     } else {
         res["game"] = game;
         // On avertit les autres joueurs du départ
         res["broadcast"] = [{"type": "removePlayer", "pseudo": sl.pseudo}];
+        // Si le meneur quitte la partie il n'est plus meneur de la partie
+        // Il pourra se reconnecter en tant que simple détective sur cette partie
+        // Mais c'est un peu de la triche s'il donne la réponse
+        if (role === "leader") {
+            sg.games[game]["leader"] = "";
+        }
         // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
         // Alors on désigne un nouveau meneur
         if (role === "leader" && sg.games[game]["secret"] === "") {
