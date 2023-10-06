@@ -251,9 +251,11 @@ export function contact(rq, sg, sl) {
     if (winner) {
         console.log("< end game winner", winner, ">");
         const nextLeader = winner === "leader" ? sg.games[game]["leader"] : sl.pseudo;
-        res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"]});
-        res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+        res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"],
+        "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
         "players": Object.keys(sg.games[game]["players"])});
+        /*res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+        "players": Object.keys(sg.games[game]["players"])});*/
         // Réinitialisation de la partie
         sg.games[game]["secret"] = "";
         sg.games[game]["letters"] = 1;

@@ -16,12 +16,12 @@ const requests = {
 
     // Rejoindre une partie
     joinGame: function(rq) {
-        // Manche suivante d'une partie
-        if (!rq.hasOwnProperty("accepted")) {
-            pages.nextRound(rq);
-        }
         // Rejoindre une salle
-        else if (rq["accepted"]) {
+        // Pas de champ accepted si changement de meneur
+        if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
+            console.log(1, leader);
+            pages.quitGame();
+            console.log(3);
             game = rq["game"];
             leader = rq["leader"];
             role = leader === pseudo ? "leader" : "detective";
@@ -70,6 +70,8 @@ const requests = {
             pages.printSecret(rq["word"]);
         }
         pages.endGame(rq["winner"]);
+        // Manche suivante d'une partie
+        pages.nextRound(rq);
     },
 
     // Ajouter un nouveau joueur

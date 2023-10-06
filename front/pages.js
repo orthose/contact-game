@@ -30,6 +30,7 @@ const pages = {
     },
 
     quitGame: function() {
+        console.log(2);
         if (leader) { pages.removeLeaderStar(); }
         const game = document.getElementById("game");
         game.querySelector("span").innerHTML = "";
