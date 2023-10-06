@@ -181,7 +181,7 @@ export function contact(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     const ndef = rq["ndef"];
-    rq["word"] = rq["word"].toUpperCase();
+    rq["word"] = htmlspecialchars(rq["word"].toUpperCase());
     
     // Les mots correspondent-ils ?
     let isvalid = sg.games[game]["def"][ndef] === rq["word"];
@@ -356,7 +356,7 @@ export const requests = {
                     // Le joueur n'a pas pas proposé cette définition ?
                     && !sg.games[game]["players"][sl.pseudo].has(ndef)
                     // Le meneur ne peut pas proposer le mot secret pour contrer
-                    && (getRole(sg, sl) !== "leader" || sg.games[game]["def"][ndef] !== sg.games[game]["secret"])
+                    && (getRole(sg, sl) !== "leader" || rq["word"].toUpperCase() !== sg.games[game]["secret"])
                 );
             }
             return res;
