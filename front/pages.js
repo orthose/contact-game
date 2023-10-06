@@ -135,7 +135,7 @@ const pages = {
         const main = document.querySelector("main");
         main.appendChild(createElement("button", {
             textContent: "Continuer",
-            onclick: () => { requests.joinGame(rq); },
+            onclick: () => { pages.quitGame(); requests.joinGame(rq); },
         }));
     },
 

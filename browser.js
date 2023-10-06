@@ -4,9 +4,10 @@ const send = (json) => ws.send(JSON.stringify(json));
 
 ws.onclose = function(ev) {
     console.log("Connexion perdue...");
-    pseudo = "";
+    pseudo = ""; // Inutile si on recharge la page
     // Revenir à la page d'accueil
-    pages.register();
+    location.reload();
+    //pages.register();
 };
 
 // Réception des messages du serveur
