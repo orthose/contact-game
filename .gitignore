@@ -1,3 +1,4 @@
 node_modules/
 assets/dico/
 certs/
+logs.out

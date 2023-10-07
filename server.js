@@ -41,7 +41,9 @@ wss.on("connection", function(ws) {
     }
 
     ws.on("message", function(data) {
-        const rq = JSON.parse(data);
+        let rq; try { rq = JSON.parse(data); }
+        // On ignore la requête en cas d'erreur de parsing 
+        catch(err) { return; }
         console.log(rq);
 
         // Le type de requête est-il valide ?
