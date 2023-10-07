@@ -221,7 +221,6 @@ export function contact(rq, sg, sl) {
         if (isvalid) {
             const letters = ++sg.games[game]["letters"];
             const secret = sg.games[game]["secret"].slice(0,letters);
-            // TODO: Vider les numéros de définition dans "players" et faire repartir ndef = 0 ?
             console.log("< hint found", secret, ">");
             res.push({"type": "hint", "word": secret});
             // Fin de partie si mot secret trouvé par contact entre détectives ou si toutes les lettres trouvées

@@ -1,4 +1,4 @@
-const ws = new WebSocket(`ws://${config["host"]}:${config["port"]}`);
+const ws = new WebSocket(`wss://${config["host"]}:${config["port"]}`);
 
 const send = (json) => ws.send(JSON.stringify(json));
 

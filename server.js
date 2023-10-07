@@ -1,9 +1,16 @@
 import { config } from "./back/config.js";
 import { players, games } from "./back/data.js";
 import { requests, onclose } from "./back/requests.js";
+import { createServer } from 'https';
+import { readFileSync } from 'fs';
 import { WebSocket, WebSocketServer } from 'ws';
 
-const wss = new WebSocketServer({port: config["port"]});
+const server = createServer({
+    cert: readFileSync(config["certfile"]),
+    key: readFileSync(config["keyfile"]),
+});
+
+const wss = new WebSocketServer({ server });
 
 // Scope global du serveur
 const sg = {players: players, games: games}
@@ -74,3 +81,4 @@ wss.on("connection", function(ws) {
     //ws.on('error', console.error);
 });
 
+server.listen(config["port"]);
