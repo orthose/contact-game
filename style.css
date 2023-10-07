@@ -261,3 +261,13 @@ p.error {
     color: white;
     padding: 5px 10px;
 }
+
+footer {
+    margin-top: 80px;
+    font-size: small;
+    text-align: center;
+}
+
+footer span {
+    vertical-align: middle;
+}
