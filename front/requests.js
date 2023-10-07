@@ -170,8 +170,12 @@ const requests = {
             removeElement(document.getElementById(n));
         });
         // La défintion est consommée
-        if (!(rq["pseudo"] === leader && !rq["accepted"] )) {
+        if (!(rq["pseudo"] === leader && !rq["accepted"])) {
             div.classList.add("solved");
+            removeElement(div.querySelector("input"));
+            removeElement(div.querySelector("button"));
+        }
+        if (role === "leader" && rq["pseudo"] === leader && !rq["accepted"]) {
             removeElement(div.querySelector("input"));
             removeElement(div.querySelector("button"));
         }
