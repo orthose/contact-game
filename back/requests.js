@@ -21,7 +21,7 @@
 
 import { getRole } from "./data.js";
 import * as checks from "./checks.js";
-import { htmlspecialchars } from "./utils.js";
+import { htmlspecialchars, formatInput } from "./utils.js";
 
 // Enregistrer un nouveau joueur lors de sa première connexion
 export function register(rq, sg, sl) {
@@ -127,7 +127,7 @@ export function quitGame(rq, sg, sl) {
 
 // Proposer un mot secret
 export function secret(rq, sg, sl) {
-    const secret = rq["word"].toUpperCase();
+    const secret = formatInput(rq["word"]);
     const game = sg.players[sl.pseudo]["game"];
     // Le mot est-il dans le dictionnaire ?
     const isvalid = checks.wordExists(secret);
@@ -147,7 +147,7 @@ export function secret(rq, sg, sl) {
 export function definition(rq, sg, sl) {
     const res = {};
     const def = htmlspecialchars(rq["def"]);
-    const word = rq["word"].toUpperCase();
+    const word = formatInput(rq["word"]);
     const game = sg.players[sl.pseudo]["game"];
     const ndef = sg.games[game]["ndef"];
     const isvalid = (
@@ -181,7 +181,7 @@ export function contact(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
     const ndef = rq["ndef"];
-    rq["word"] = htmlspecialchars(rq["word"].toUpperCase());
+    rq["word"] = htmlspecialchars(formatInput(rq["word"]));
     
     // Les mots correspondent-ils ?
     let isvalid = sg.games[game]["def"][ndef] === rq["word"];
@@ -355,7 +355,7 @@ export const requests = {
                     // Le joueur n'a pas pas proposé cette définition ?
                     && !sg.games[game]["players"][sl.pseudo].has(ndef)
                     // Le meneur ne peut pas proposer le mot secret pour contrer
-                    && (getRole(sg, sl) !== "leader" || rq["word"].toUpperCase() !== sg.games[game]["secret"])
+                    && (getRole(sg, sl) !== "leader" || formatInput(rq["word"]) !== sg.games[game]["secret"])
                 );
             }
             return res;
