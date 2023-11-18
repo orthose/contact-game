@@ -193,3 +193,24 @@ telnet my.domain.org 8080
 
 Pour accéder au jeu il suffit d'héberger les fichiers sur un serveur Apache ou NGINX
 et de requêter le fichier `index.html`. Le jeu ne peut fonctionner que dans un navigateur moderne.
+
+# Développement
+
+## Changer numéro de version
+Modifier la version du package Node.js côté serveur.
+Crée automatiquement un tag git.
+```shell
+npm version 0.0.1
+```
+
+Modifier la version affichée sur le site dans le `footer`.
+```html
+<span>Version Bêta 0.0.1</span>
+```
+
+Créer un tag git manuellement et l'envoyer.
+```shell
+git tag -a v0.0.1
+git push origin v0.0.1
+git push --tags # pas recommandé
+```
