@@ -271,3 +271,27 @@ footer {
 footer span {
     vertical-align: middle;
 }
+
+div#network {
+    font-size: 16px;
+}
+/* https://loading.io/css/ */
+.lds-dual-ring {
+    display: inline-block;
+    vertical-align: middle;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 3px solid darkblue;
+    border-color: darkblue transparent darkblue transparent;
+    animation: lds-dual-ring 2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

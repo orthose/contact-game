@@ -21,7 +21,7 @@
 
 import { getRole } from "./data.js";
 import * as checks from "./checks.js";
-import { htmlspecialchars, formatInput } from "./utils.js";
+import { htmlspecialchars, formatInput, randomPassword } from "./utils.js";
 
 // Enregistrer un nouveau joueur lors de sa première connexion
 export function register(rq, sg, sl) {
@@ -31,18 +31,56 @@ export function register(rq, sg, sl) {
         sl.pseudo === "" && !sg.players.hasOwnProperty(rq["pseudo"])
         && checks.inputIsValid(rq["pseudo"])
     );
+    let sid = "";
     if (isvalid) {
         sl.pseudo = rq["pseudo"];
+        // Note: le sid n'est pas unique c'est un mot de passe
+        sid = randomPassword(32);
+        sg.players[sl.pseudo] = {"ws": sl.ws, "sid": sid, "closeTimer": null, "game": ""};
         console.log("<", sl.pseudo, "registered >");
-        sg.players[sl.pseudo] = {"ws": sl.ws, "game": ""};
     }
-    return {"send": {"type": "register", "pseudo": rq["pseudo"], "accepted": isvalid}};
+    return {"send": {"type": "register", "pseudo": rq["pseudo"], "sid": sid, "accepted": isvalid}};
 }
 
 // Déconnecter le joueur courant
 export function unregister(rq, sg, sl) {
     sl.ws.close();
     return {};
+}
+
+// Restaurer la session (pseudo, sid) dans le délai imparti
+export function restore(rq, sg, sl) {
+    const isvalid = (
+        // Le joueur existe-t-il encore ?
+        sg.players.hasOwnProperty(rq["pseudo"])
+        // Le session id est-il valide ?
+        && rq["sid"] === sg.players[rq["pseudo"]]["sid"]
+    );
+    let res = []; // En cas de restauration invalide on ne répond pas
+    if (isvalid) {
+        // Arrêt du délai de suppression du joueur
+        clearTimeout(sg.players[rq["pseudo"]]["closeTimer"]);
+        // Mise à jour des données du joueur
+        sl.pseudo = rq["pseudo"];
+        sg.players[sl.pseudo]["ws"] = sl.ws;
+        console.log("<", sl.pseudo, "session restored >");
+        res.push({"type": "restore", "pseudo": rq["pseudo"], "accepted": isvalid});
+        // Si le joueur est dans une partie alors on l'informe de l'état actuel
+        // Dans la plupart des cas si la déconnexion n'est pas longue ce n'est pas utile
+        // Si le joueur a raté beaucoup de messages alors il doit attendre
+        // le prochain contact pour mettre à jour l'état de la partie
+        // Dans le pire des cas il peut manquer une fin de partie
+        /*if (sg.players[sl.pseudo]["game"] !== "") {
+            const game = sg.players[sl.pseudo]["game"];
+            const ntry = sg.games[game]["ntry"];
+            const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
+            const leader = sg.games[game]["leader"];
+            // Le client devra supprimer toutes les définitions sauf celles dans "def" ou marquées .solved
+            res.push({"type": "updateGame", "ntry": ntry, "secret": secret, "leader": leader, 
+            "players": Object.keys(sg.games[game]["players"]), "def": Object.keys(sg.games[game]["def"])});
+        }*/
+    }
+    return {"send": res};
 }
 
 // Rejoindre ou créer une partie
@@ -265,8 +303,6 @@ export function contact(rq, sg, sl) {
         res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"],
         "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
         "players": Object.keys(sg.games[game]["players"])});
-        /*res.push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
-        "players": Object.keys(sg.games[game]["players"])});*/
         // Réinitialisation de la partie
         sg.games[game]["secret"] = "";
         sg.games[game]["letters"] = 1;
@@ -311,6 +347,10 @@ export const requests = {
     "unregister": {
         "precheck": (rq, sg, sl) => sl.pseudo !== "",
         "callback": unregister
+    },
+    "restore": {
+        "precheck": (rq, sg, sl) => rq["pseudo"] !== "" && rq["sid"] !== "",
+        "callback": restore
     },
     "joinGame": {
         "precheck": (rq, sg, sl) => rq["game"] !== "" && sl.pseudo !== "",

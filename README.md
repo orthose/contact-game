@@ -144,6 +144,26 @@ la table **NAT/PAT**. Ci-dessous un exemple pour ma Livebox.
 |-------------------|------------|------------|---------|----------|----------|
 |Secure Web Server (HTTPS)|8080|8080|TCP|samsung-N150|Toutes|
 
+En cas de fermeture du socket (passer le navigateur en arrière-plan sur mobile), 
+le client essaye de se reconnecter automatiquement au serveur avec son pseudo 
+et son mot de passe de session. Il a par défaut 3 minutes pour le faire.
+Cette valeur est paramétrable dans `back/config.js`.
+```js
+export const config = {
+    "closeTimeout": 3*60*1000,
+}
+```
+
+Par défaut, le client essaye de demander 3 fois à 10 secondes d'intervalle 
+une restauration de session auprès du serveur. Ces paramètres peuvent être
+configurés dans `front/config.js`.
+```js
+const config = {
+    "maxRetry": 3,
+    "retryInterval": 10000,
+}
+```
+
 ## Lancement du serveur
 Pour lancer le serveur dans la console en mode local.
 Attention évitez de lancer le serveur avec le super-utilisateur.

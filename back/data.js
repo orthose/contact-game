@@ -1,10 +1,12 @@
 /**
  * Objet stockant la liste des joueurs
  * 
- * {"pseudo1": {"ws": WebSocket, "game": "game1"}, ...}
+ * {"pseudo1": {"ws": WebSocket, "sid": "abcdef...", "closeTimer": null, "game": "game1"}, ...}
  * 
  * "pseudo1": pseudo unique du joueur
  * "ws": socket pour communiquer avec le joueur
+ * "sid": mot de passe session id pour restaurer connexion
+ * "closeTimer": Délai avant suppression du joueur
  * "game": identifiant de la partie du joueur
  */
 export const players = {};

@@ -7,7 +7,7 @@ const requests = {
     // Enregistrer le joueur
     register: function(rq) {
         if (rq["accepted"]) {
-            pseudo = rq["pseudo"]
+            pseudo = rq["pseudo"]; sid = rq["sid"];
             // Affichage du pseudo
             pages.listPlayers();
             document.querySelector("#players").style = "display: block";
@@ -16,6 +16,18 @@ const requests = {
             pages.chooseGame();
         } else {
             pages.invalidInput(document.getElementById("pseudo_input"));
+        }
+    },
+
+    // Restaurer la session
+    restore: function(rq) {
+        if (rq["accepted"]) {
+            // Désactivation de la boucle de restauration de session
+            clearInterval(retryTimer);
+            // Suppression du message de reconnexion
+            document.getElementById("network").style = "display: none";
+            // On réactive la fonction appelée en cas de fermeture de socket
+            ws.onclose = onclose;
         }
     },
 

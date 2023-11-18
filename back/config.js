@@ -7,4 +7,5 @@ export const config = {
     "minInputLength": 1,
     "maxInputLength": 16,
     "ntry": 5,
+    "closeTimeout": 3*60*1000,
 };

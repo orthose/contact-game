@@ -12,7 +12,7 @@ const callbacks = {
     
     unregister: function() {
         send({"type": "unregister"});
-        // Redémarrage d'un nouveau socket
+        // Redémarrage d'un nouveau socket et réinitialisation des variables
         location.reload();
     },
     
