@@ -33,17 +33,20 @@ function connectionError() {
 
 // Ne pas appeler dans connectServer pour éviter boucle infinie
 function onclose(ev) {
-    connectServer(); // Tentative de reconnexion au serveur
     // Le joueur possède-t-il une session ?
     if (pseudo !== "" && sid !== "") {
         document.getElementById("network").style = "display: block";
+        connectServer(); // Tentative initiale de reconnexion au serveur
         // Boucle de demande de restauration de session
         let retry = 0; retryTimer = setInterval(() => {
             if (retry < config["maxRetry"]) {
                 // On doit attendre que le nouveau socket soit connecté
                 if (ws.readyState === WebSocket.OPEN) {
                     send({"type": "restore", "pseudo": pseudo, "sid": sid});
-                } retry++;
+                }
+                // Si le socket n'est pas connecté alors on essaye de le reconnecter 
+                else { ws.close(); connectServer(); } 
+                retry++;
             }
             else {
                 clearInterval(retryTimer);

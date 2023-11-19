@@ -154,13 +154,14 @@ export const config = {
 }
 ```
 
-Par défaut, le client essaye de demander 3 fois à 10 secondes d'intervalle 
-une restauration de session auprès du serveur. Ces paramètres peuvent être
-configurés dans `front/config.js`.
+Par défaut, le client essaye de demander 15 fois à 2 secondes d'intervalle 
+une restauration de session auprès du serveur. Sachant qu'une connexion initiale
+au websocket prend au maximum 250 ms si le réseau est disponible.
+Ces paramètres peuvent être configurés dans `front/config.js`.
 ```js
 const config = {
-    "maxRetry": 3,
-    "retryInterval": 10000,
+    "maxRetry": 6,
+    "retryInterval": 5000,
 }
 ```
 
