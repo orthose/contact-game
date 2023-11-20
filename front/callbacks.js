@@ -12,6 +12,7 @@ const callbacks = {
     
     unregister: function() {
         send({"type": "unregister"});
+        ws.onclose = null; // Ne pas restaurer la session
         // Redémarrage d'un nouveau socket et réinitialisation des variables
         location.reload();
     },
