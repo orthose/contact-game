@@ -296,34 +296,43 @@ div#network {
     100% { transform: rotate(360deg); }
 }
 
-section#rules {
+#rules {
     margin-top: 80px;
 }
 
-section#rules :is(p, ul) {
+section :is(p, ul) {
     font-size: 16px;
 }
 
-section#rules h2 {
-    cursor: pointer;
-}
-
-section#rules h2:hover {
-    text-decoration: underline;
-}
-
-section#rules h2.fold::after {
-    content: "🡲";
-}
-
-section#rules h2.unfold::after {
-    content: "🡳";
-}
-
-section#rules ul {
+section ul {
     padding-left: 20px;
 }
 
-section#rules ul li {
+section ul li {
     margin-bottom: 10px;
+}
+
+section h2 {
+    cursor: pointer;
+}
+
+section h2:hover {
+    text-decoration: underline;
+}
+
+.fold::after {
+    content: "🡲";
+}
+
+.unfold::after {
+    content: "🡳";
+}
+
+a {
+    color: darkblue;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }

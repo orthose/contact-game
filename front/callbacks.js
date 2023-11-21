@@ -44,7 +44,7 @@ const callbacks = {
         if (word) { send({"type": "contact", "word": word, "ndef": parseInt(ndef)}); }
     },
 
-    rules: function(tag) {
+    summary: function(tag) {
         const display = tag.nextElementSibling.style.display;
         if (display === "none") {
             tag.className = "unfold";
