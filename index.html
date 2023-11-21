@@ -21,26 +21,61 @@
 </head>
 <body onload="pages.register()">
     <header>
-        <img id="quit" src="./assets/img/exit.png" style="display: none"
+        <img id="quit" src="./assets/img/exit.png" style="display:none"
             onmouseleave="this.src = './assets/img/exit.png'"
             onmouseover="this.src = './assets/img/exit-hover.png'">
         <h1>Contact Game</h1>
-        <div id="network" style="display: none;"><div class="lds-dual-ring"></div>&nbsp;Reconnexion en cours…</div>
-        <div id="players" style="display: none;">
+        <div id="network" style="display:none"><div class="lds-dual-ring"></div>&nbsp;Reconnexion en cours…</div>
+        <div id="players" style="display:none">
             <img src="./assets/img/player.png">
             <ul></ul>
         </div>
-        <div id="game" style="display: none;">
+        <div id="game" style="display:none">
             <img src="./assets/img/home.png">
             <span></span>
         </div>
-        <div id="secret" style="display: none;">
+        <div id="secret" style="display:none">
             <img src="./assets/img/lock.png">
             <span></span>
         </div>
         <p id="ntry"></p>
     </header>
     <main></main>
+    <section id="rules">
+        <h2 class="fold" onclick="callbacks.rules(this)">Règles du jeu&nbsp;</h2>
+        <div style="display:none">
+        <p>« Contact » est un jeu de mots convivial dont les règles sont très simples. 
+        Il se joue au minimum à <strong>trois</strong> joueurs. Pour commencer à jouer, choisissez un pseudonyme 
+        et un nom de salle de jeu.</p>
+        <h3>Préparation</h3>
+        <p>Un joueur qu'on appellera le <strong>meneur</strong> choisit un mot qui peut être conjugué ou décliné 
+        sans le révéler aux autres joueurs et annonce la première lettre de celui-ci.
+        Ce mot doit être un mot valide du dictionnaire français.</p>
+        <h3>Déroulement</h3>
+        <p>Un joueur parmi ceux cherchant à deviner le mot qu'on appellera les <strong>détectives</strong> 
+        propose une définition faisant référence à un mot commençant par la lettre annoncée. 
+        Cette définition ne doit évidemment pas inclure le mot ou une racine du mot auquel elle fait référence.</p>
+        <p>Si un autre détective croît avoir deviné le mot auquel fait référence cette définition,
+        alors il dit « contact » et après un décompte de trois, les deux joueurs doivent
+        simultanément énoncer le mot auquel ils pensent.</p>
+        <ul>
+        <li>Si les deux mots sont identiques alors la lettre suivante du mot doit être révélée par le meneur.
+        Les prochaines définitions devront faire référence à des mots commençant par la suite de lettres ainsi révélées.</li>
+        <li>Sinon si les deux mots diffèrent alors aucun indice n'est révélé.</li>
+        </ul>
+        <p>Si le meneur pense avoir deviné le mot auquel fait référence la définition proposée, 
+        il a le droit de s'interposer pour annuler la tentative des détectives en énonçant « pas » suivi du mot en question.</p>
+        <h3>Fin de partie</h3>
+        <ul>
+        <li>Si deux détectives parviennent à énoncer simultanément le mot secret du meneur alors ils ont gagné.
+        Le prochain meneur est l'un de ces deux détectives.</li>
+        <li>Si deux détectives énoncent simultanément deux mots différents dont le mot secret alors le meneur a gagné.
+        Le prochain meneur reste inchangé.</li>
+        <li>Sinon lorsque le décompte du nombre de tentatives tombe à zéro le meneur a gagné.
+        Le prochain meneur reste inchangé.</li>
+        </ul>
+        </div>
+    </section>
     <footer>
         <span>Version Bêta 0.0.2</span>
         <a href="https://github.com/orthose/contact-game" target="_blank"><img src="./assets/img/github.png" alt="GitHub" 

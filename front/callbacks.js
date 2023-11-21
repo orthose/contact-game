@@ -43,4 +43,16 @@ const callbacks = {
         const word = document.querySelector(`#definition div[id="${ndef}"] input.word_input`).value;
         if (word) { send({"type": "contact", "word": word, "ndef": parseInt(ndef)}); }
     },
+
+    rules: function(tag) {
+        const display = tag.nextElementSibling.style.display;
+        if (display === "none") {
+            tag.className = "unfold";
+            tag.nextElementSibling.style.display = "block";
+        }
+        else {
+            tag.className = "fold";
+            tag.nextElementSibling.style.display = "none";
+        }
+    },
 };

@@ -12,6 +12,8 @@ const requests = {
             pages.listPlayers();
             document.querySelector("#players").style = "display: block";
             document.querySelector("#players li").classList.add("mypseudo");
+            // Masquer les règles
+            document.getElementById("rules").style = "display: none";
             // Formulaire de création de partie
             pages.chooseGame();
         } else {

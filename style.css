@@ -117,7 +117,7 @@ img {
     vertical-align: middle;
 }
 
-ul {
+:is(header, main) ul {
     list-style: none;
     display: inline-block;
     padding: 0px 0px;
@@ -126,7 +126,7 @@ ul {
     width: calc(100% - 75px);
 }
 
-li {
+:is(header, main) li {
     display: inline-block;
     background-color: darkblue;
     font-size: large;
@@ -139,7 +139,7 @@ li {
     max-width: 100px;
 }
 
-li.mypseudo {
+:is(header, main) li.mypseudo {
     color: aqua;
 }
 
@@ -294,4 +294,36 @@ div#network {
 @keyframes lds-dual-ring {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+section#rules {
+    margin-top: 80px;
+}
+
+section#rules :is(p, ul) {
+    font-size: 16px;
+}
+
+section#rules h2 {
+    cursor: pointer;
+}
+
+section#rules h2:hover {
+    text-decoration: underline;
+}
+
+section#rules h2.fold::after {
+    content: "🡲";
+}
+
+section#rules h2.unfold::after {
+    content: "🡳";
+}
+
+section#rules ul {
+    padding-left: 20px;
+}
+
+section#rules ul li {
+    margin-bottom: 10px;
 }

@@ -10,10 +10,10 @@ C'est grâce à mon cousin Quentin Barillot que je l'ai découvert cet été.
 * Architecture classique client-serveur.
 * Vérification des règles côté serveur.
 * Stockage non-persistant des parties en cours.
-* Système d'authentification sécurisé en stockage persistant.
 * Interface graphique multi-plateformes sobre et intuitive. 
 
-## Fonctionnalités supplémentaires
+## Fonctionnalités supplémentaires optionnelles
+* Système d'authentification sécurisé en stockage persistant.
 * Classement des joueurs.
 * Pénalité en cas d'abandon de partie.
 * Mode solo et hors-ligne hors classement.
@@ -22,7 +22,7 @@ C'est grâce à mon cousin Quentin Barillot que je l'ai découvert cet été.
 
 # Règles du jeu
 ## Préparation
-Un joueur qu'on appellera le **meneur** choisit un mot non-conjugué ni décliné 
+Un joueur qu'on appellera le **meneur** choisit un mot qui peut être conjugué ou décliné 
 sans le révéler aux autres joueurs et annonce la première lettre de celui-ci.
 Ce mot doit être un mot valide du dictionnaire français.
 
