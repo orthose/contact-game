@@ -74,7 +74,12 @@ input, textarea {
     color: darkblue;
 }
 
-input::placeholder, textarea:placeholder {
+/* https://stackoverflow.com/a/39155868 */
+input::placeholder {
+    color: darkblue;
+    opacity: 0.5;
+}
+textarea::placeholder {
     color: darkblue;
     opacity: 0.5;
 }
