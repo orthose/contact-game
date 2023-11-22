@@ -1,9 +1,12 @@
 import { config } from "./back/config.js";
 import { players, games } from "./back/data.js";
 import { requests, onclose } from "./back/requests.js";
+import { log } from "./back/utils.js";
 import { createServer } from 'https';
 import { readFileSync } from 'fs';
 import { WebSocket, WebSocketServer } from 'ws';
+
+console.log = log; // Format des logs
 
 const server = createServer({
     cert: readFileSync(config["certfile"]),
@@ -44,10 +47,10 @@ wss.on("connection", function(ws) {
         let rq; try { rq = JSON.parse(data); }
         // On ignore la requête en cas d'erreur de parsing 
         catch(err) { return; }
-        console.log(rq);
 
         // Le type de requête est-il valide ?
         if (rq.hasOwnProperty("type") && requests.hasOwnProperty(rq["type"])) {
+            if (rq["type"] !== "restore") { console.log(rq); }
             const request = requests[rq["type"]];
             // La requête est-elle valide ?
             if (request["precheck"](rq, sg, sl)) {

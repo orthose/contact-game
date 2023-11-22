@@ -1,5 +1,11 @@
 import crypto from 'crypto'
 
+const stdout = console.log;
+export function log(...str) {
+    str.unshift('['+(new Date().toISOString())+']');
+    stdout(...str);
+}
+
 export function htmlspecialchars(str) {
     return String(str)
         .replace(/&/g, '&amp;')
