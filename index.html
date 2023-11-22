@@ -5,6 +5,8 @@
     <title>Contact Game</title>
     <!-- Responsive web site for smartphone -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- Application web progressive -->
+    <link rel="manifest" href="./contact-game.webmanifest">
     <!-- Icônes -->
     <link rel="icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
     <link rel="apple-touch-icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
@@ -44,16 +46,18 @@
     <section id="rules">
         <h2 class="fold" onclick="callbacks.summary(this)">Règles du jeu&nbsp;</h2>
         <div style="display:none">
-        <p>« Contact » est un jeu de mots convivial dont les règles sont très simples. 
-        Il se joue au minimum à <strong>trois</strong> joueurs. Pour commencer à jouer, choisissez un pseudonyme 
-        et un nom de salle de jeu.</p>
+        <p><strong>Contact Game</strong> est un jeu de mots convivial et gratuit dans lequel vous devez coopérer entre détectives 
+        pour découvrir le <strong>mot mystère</strong> choisi par le meneur de la partie. 
+        Il se joue au minimum à <strong>trois joueurs</strong> avec un meneur et deux détectives.</p>
+        <p>Pour commencer à jouer, choisissez un <strong>pseudonyme</strong> et un nom de <strong>salle de jeu</strong> 
+        que vous pouvez partager avec vos amis.</p>
         <h3>Préparation</h3>
         <p>Un joueur qu'on appellera le <strong>meneur</strong> choisit un mot qui peut être conjugué ou décliné 
         sans le révéler aux autres joueurs et annonce la première lettre de celui-ci.
         Ce mot doit être un mot valide du dictionnaire français.</p>
         <h3>Déroulement</h3>
         <p>Un joueur parmi ceux cherchant à deviner le mot qu'on appellera les <strong>détectives</strong> 
-        propose une définition faisant référence à un mot commençant par la lettre annoncée. 
+        propose une <strong>définition</strong> faisant référence à un mot commençant par la lettre annoncée. 
         Cette définition ne doit évidemment pas inclure le mot ou une racine du mot auquel elle fait référence.</p>
         <p>Si un autre détective croît avoir deviné le mot auquel fait référence cette définition,
         alors il dit « contact » et après un décompte de trois, les deux joueurs doivent

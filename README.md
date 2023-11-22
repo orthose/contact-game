@@ -61,6 +61,24 @@ Si l'IA est utilisée pour faire deviner le mot, seulement deux joueurs sont né
 
 Il est possible d'envisager un mode solo dans lequel l'IA fait deviner au joueur des mots du dictionnaire.
 
+# Installation de l'application
+L'application web peut être utilisée en tant que PWA (application web progressive) sur smartphone,
+grâce aux informations contenues dans le fichier `contact-game.webmanifest`.
+Cependant, elle ne fonctionne pas hors-ligne.
+
+## Installation sur Android
+1. Sur votre appareil Android, ouvrez Chrome.
+2. Accédez à un site Web comportant une PWA que vous souhaitez installer.
+3. Appuyez sur Installer.
+4. Suivez les instructions à l'écran.
+
+## Installation sur iOS
+1. Sur votre iPhone ou votre iPad, ouvrez Safari.
+2. Accédez au site que vous souhaitez ajouter.
+3. À côté de la barre d'adresse, appuyez sur Partager.
+4. Recherchez l'option Ajouter à l'écran d'accueil, puis appuyez dessus.
+5. Confirmez ou modifiez les détails concernant le site Web, puis appuyez sur Ajouter.
+
 # Mise en production
 Les instructions ci-dessous sont valables pour un système sous **Debian**.
 
