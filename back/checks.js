@@ -28,6 +28,7 @@ export function inputIsValid(input) {
 /**
  * La définition est-elle valide sachant le mot mystère ?
  * La racine du mot ne doit pas apparaître dans la définition
+ * La taille de la définition ne doit pas excéder la taille autorisée
  * 
  * @param word Chaîne de caractères du mot mystère 
  * @param def Chaîne de caractères de la défintion
@@ -35,5 +36,5 @@ export function inputIsValid(input) {
  */
 export function definitionIsValid(word, def) {
     // TODO: Il faudrait vérifier la racine du mot également
-    return !(def.toUpperCase().includes(word.toUpperCase()));
+    return def.length <= config["maxDefLength"] && !(def.toUpperCase().includes(word.toUpperCase()));
 }

@@ -238,6 +238,10 @@ div.definition.solved {
     background-color: rgba(175,238,238,0.3);
 }
 
+div.definition p.definition {
+    overflow-wrap: break-word;
+}
+
 div#end_game {
     border-radius: 15px;
     padding: 10px 20px;
