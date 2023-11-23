@@ -7,6 +7,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- Application web progressive -->
     <link rel="manifest" href="./contact-game.webmanifest">
+    <meta name="theme-color" content="white">
+    <!-- Référencement SEO -->
+    <meta name="description" content="🎮 Contact Game est un jeu en ligne gratuit et multijoueurs dans lequel vous devez coopérer entre détectives 🕵️ pour découvrir le mot mystère.">
+    <meta property="og:title" content="🎮 Contact Game">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://contact-game.fr">
+    <meta property="og:image" content="https://contact-game.fr/assets/img/favicon.png">
+    <meta property="og:description" content="Rejoignez vos amis sur 🎮 Contact Game pour des parties endiablées 😈 et tentez de deviner le mot mystère 🔒 ! Jeu en ligne gratuit sans inscription ni publicités.">
+    <meta property="og:locale" content="fr_FR">
+    <link rel="canonical" href="https://contact-game.fr">
     <!-- Icônes -->
     <link rel="icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
     <link rel="apple-touch-icon" type="image/png" href="./assets/img/favicon.png" sizes="512x512">
@@ -46,10 +56,12 @@
     <section id="rules">
         <h2 class="fold" onclick="callbacks.summary(this)">Règles du jeu&nbsp;</h2>
         <div style="display:none">
-        <p><strong>Contact Game</strong> est un jeu de mots convivial et gratuit dans lequel vous devez coopérer entre détectives 
-        pour découvrir le <strong>mot mystère</strong> choisi par le meneur de la partie. 
-        Il se joue au minimum à <strong>trois joueurs</strong> avec un meneur et deux détectives.</p>
-        <p>Pour commencer à jouer, choisissez un <strong>pseudonyme</strong> et un nom de <strong>salle de jeu</strong> 
+        <p>🎮&nbsp;<strong>Contact Game</strong> est un jeu de mots convivial dans lequel vous devez coopérer entre détectives&nbsp;🕵️
+        pour découvrir le <strong>mot mystère</strong>&nbsp;🔒 choisi par le meneur de la partie.</p>
+        <p>Pour cela, vous devrez faire deviner à vos cooéquipiers des mots intermédiaires. 
+        Mais attention, le meneur peut contrer vos définitions et si vous échouez plusieurs fois, il remportera la partie&nbsp;!</p>
+        <p>💡&nbsp;<strong>Contact</strong> se joue au minimum à <strong>trois joueurs</strong> avec un meneur et deux détectives.</p>
+        <p>Pour commencer à jouer, choisissez un <strong>pseudonyme</strong>&nbsp;👨🏻‍💻 et un nom de <strong>salle de jeu</strong>&nbsp;🏠 
         que vous pouvez partager avec vos amis.</p>
         <h3>Préparation</h3>
         <p>Un joueur qu'on appellera le <strong>meneur</strong> choisit un mot qui peut être conjugué ou décliné 
@@ -60,19 +72,19 @@
         propose une <strong>définition</strong> faisant référence à un mot commençant par la lettre annoncée. 
         Cette définition ne doit évidemment pas inclure le mot ou une racine du mot auquel elle fait référence.</p>
         <p>Si un autre détective croît avoir deviné le mot auquel fait référence cette définition,
-        alors il dit « contact » et après un décompte de trois, les deux joueurs doivent
+        alors il dit <strong>« contact »</strong> et après un décompte de trois, les deux joueurs doivent
         simultanément énoncer le mot auquel ils pensent.</p>
         <ul>
-        <li>Si les deux mots sont identiques alors la lettre suivante du mot doit être révélée par le meneur.
+        <li>Si les deux mots sont <strong>identiques</strong> alors la lettre suivante du mot doit être révélée par le meneur.
         Les prochaines définitions devront faire référence à des mots commençant par la suite de lettres ainsi révélées.</li>
-        <li>Sinon si les deux mots diffèrent alors aucun indice n'est révélé.</li>
+        <li>Sinon si les deux mots <strong>diffèrent</strong> alors aucun indice n'est révélé et les détectives perdent une vie.</li>
         </ul>
         <p>Si le meneur pense avoir deviné le mot auquel fait référence la définition proposée, 
-        il a le droit de s'interposer pour annuler la tentative des détectives en énonçant « pas » suivi du mot en question.</p>
+        il a le droit de s'interposer pour annuler la tentative des détectives en énonçant <strong>« pas »</strong> suivi du mot en question.</p>
         <h3>Fin de partie</h3>
         <ul>
         <li>Si deux détectives parviennent à énoncer simultanément le mot secret du meneur alors ils ont gagné.
-        Le prochain meneur est l'un de ces deux détectives.</li>
+        Le prochain meneur est l'un de ces détectives.</li>
         <li>Si deux détectives énoncent simultanément deux mots différents dont le mot secret alors le meneur a gagné.
         Le prochain meneur reste inchangé.</li>
         <li>Sinon lorsque le décompte du nombre de tentatives tombe à zéro le meneur a gagné.
@@ -82,10 +94,10 @@
     </section>
     <footer>
         <span>Version Bêta 0.0.2</span>
-        <a href="https://github.com/orthose/contact-game" target="_blank"><img src="./assets/img/github.png" alt="GitHub" 
+        <a href="https://github.com/orthose/contact-game" rel="noopener" target="_blank"><img src="./assets/img/github.png" alt="GitHub" 
             width="16px" height="16px"></a>
         <span>Maxime&nbsp;Vincent</span><br>
-        <a href="./mentions-legales.html" target="_blank">Mentions Légales</a>
+        <a href="./mentions-legales.html" rel="nofollow" target="_blank">Mentions Légales</a>
     </footer>
 </body>
 </html>
