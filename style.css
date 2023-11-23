@@ -6,11 +6,12 @@
     }
 
     h1 {
-        font-size: 12vw;
+        font-size: 14vw;
     }
     
     div#end_game span {
-        font-size: 15vw;
+        font-size: 14vw;
+        overflow: scroll;
     }
 }
   
@@ -24,7 +25,7 @@
     }
 
     h1 {
-        font-size: 60px;
+        font-size: 70px;
     }
     
     div#end_game span {
@@ -43,11 +44,15 @@ body {
     overflow-y: scroll;
 }
 
+/* Ne pas afficher de barre de scroll si overflow */
+::-webkit-scrollbar {
+    display: none;
+}
+
 #quit {
     width: 32px;
     height: 32px;
     float: right;
-    display: inline-block;
     margin-bottom: 10px;
 }
 
@@ -58,9 +63,10 @@ h1 {
 }
 
 button, input {
+    appearance: none;
     -webkit-appearance: none;
-    -webkit-border-radius: 0px;
     border-radius: 0px;
+    -webkit-border-radius: 0px;
 }
 
 input, textarea {
