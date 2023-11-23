@@ -222,7 +222,7 @@ Crée automatiquement un tag git.
 npm version 0.0.1
 ```
 
-Modifier la version affichée sur le site dans le `footer`.
+~~Modifier la version affichée sur le site dans le `footer`.~~
 ```html
 <span>Version Bêta 0.0.1</span>
 ```
