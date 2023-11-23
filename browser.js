@@ -24,10 +24,11 @@ function connectionError() {
     console.log("Connexion perdue...");
     document.querySelector("body").innerHTML = 
     `<p class="error">
-    OUPS&nbsp;!&nbsp;😲<br><br>
-    La connexion a été interrompue de manière inopinée&nbsp;📶<br><br>
-    Le serveur est probablement en maintenance&nbsp;🚧<br><br>
-    Revenez plus tard&nbsp;🕐</p>
+    OUPS&nbsp;! La connexion a été perdue&nbsp;😲<br><br>
+    Essayez de recharger la page&nbsp;🔄<br>
+    Vérifiez votre connexion Internet&nbsp;📶<br><br>
+    Si le problème persiste revenez plus tard&nbsp;🕐<br>
+    Le serveur est peut-être en maintenance&nbsp;🚧</p>
     <button onclick="location.reload()">Recharger</button>`;
 }
 
