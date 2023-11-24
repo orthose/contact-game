@@ -331,16 +331,30 @@ section h2 {
     cursor: pointer;
 }
 
-section h2:hover {
-    text-decoration: underline;
+@media (hover: hover) {
+    section h2:hover {
+        text-decoration: underline;
+    }
 }
 
 .fold::after {
-    content: "🡲";
+    content: "";
+    width: 45px; height: 45px;
+    background: url("./assets/img/arrow-right.svg") no-repeat;
+    background-size: 40px 40px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
 }
 
 .unfold::after {
-    content: "🡳";
+    content: "";
+    width: 45px; height: 45px;
+    background: url("./assets/img/arrow-down.svg") no-repeat;
+    background-size: 40px 40px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
 }
 
 a {
