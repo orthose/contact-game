@@ -49,6 +49,22 @@ body {
     display: none;
 }
 
+#status {
+    width: fit-content;
+    border-radius: 15px;
+    padding: 4px 5px;
+}
+
+#status:hover {
+    cursor: pointer;
+    background-color: rgb(175,238,238);;
+}
+
+#status span {
+    overflow: scroll;
+    vertical-align: middle;
+}
+
 #quit {
     width: 32px;
     height: 32px;

@@ -36,8 +36,15 @@
         <img id="quit" src="./assets/img/exit.png" style="display:none"
             onmouseleave="this.src = './assets/img/exit.png'"
             onmouseover="this.src = './assets/img/exit-hover.png'">
+        <div id="status" style="display:none" onclick="callbacks.status()">
+            <img src="./assets/img/player.png" width="32px" height="32px">
+            <span id="onlinePlayers"></span>
+            <img src="./assets/img/home.png" width="32px" height="32px">
+            <span id="currentGames"></span>
+        </div>
         <h1>Contact Game</h1>
         <div id="network" style="display:none"><div class="lds-dual-ring"></div>&nbsp;Reconnexion en cours…</div>
+        
         <div id="players" style="display:none">
             <img src="./assets/img/player.png">
             <ul></ul>

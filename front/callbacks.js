@@ -5,6 +5,10 @@
  * Elles doivent vérifier que les données textuelles envoyées ne sont pas vides
  */
 const callbacks = {
+    status: function() {
+        send({"type": "status"});
+    },
+
     register: function() {
         const pseudo = document.getElementById("pseudo_input").value;
         if (pseudo) { send({"type": "register", "pseudo": pseudo}); }

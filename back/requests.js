@@ -23,6 +23,11 @@ import { getRole } from "./data.js";
 import * as checks from "./checks.js";
 import { htmlspecialchars, formatInput, randomPassword } from "./utils.js";
 
+// Statistiques actuelles du serveur
+export function status(rq, sg, sl) {
+    return {"send": {"type": "status", "onlinePlayers": Object.keys(sg.players).length, "currentGames": Object.keys(sg.games).length}};
+}
+
 // Enregistrer un nouveau joueur lors de sa première connexion
 export function register(rq, sg, sl) {
     // Le joueur ne doit pas déjà être enregistré
@@ -339,6 +344,10 @@ export function onclose(sg, sl) {
 // Association type de requête <-> fonction
 // Si precheck est fausse alors callback n'est pas appelée
 export const requests = {
+    "status": {
+        "precheck": (rq, sg, sl) => true,
+        "callback": status
+    },
     "register": {
         "precheck": (rq, sg, sl) => rq["pseudo"] !== "",
         "callback": register

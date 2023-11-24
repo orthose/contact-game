@@ -4,6 +4,13 @@
  * mais ne doivent pas en principe modifier directement le DOM 
  */
 const requests = {
+    // Statut du serveur
+    status: function(rq) {
+        document.getElementById("status").style = "display: block"; 
+        document.getElementById("onlinePlayers").textContent = rq["onlinePlayers"];
+        document.getElementById("currentGames").textContent = rq["currentGames"];
+    },
+
     // Enregistrer le joueur
     register: function(rq) {
         if (rq["accepted"]) {

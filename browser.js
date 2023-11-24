@@ -5,6 +5,11 @@ function connectServer() {
     ws = new WebSocket(`wss://${config["host"]}:${config["port"]}`);
     send = (json) => ws.send(JSON.stringify(json));
 
+    // Demande du statut du serveur
+    ws.onopen = function() {
+        send({"type": "status"});
+    }
+
     // Réception des messages du serveur
     ws.onmessage = function(ev) {
         let rq = JSON.parse(ev.data);
