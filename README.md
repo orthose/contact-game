@@ -213,8 +213,22 @@ telnet my.domain.org 8080
 Pour accéder au jeu il suffit d'héberger les fichiers sur un serveur Apache ou NGINX
 et de requêter le fichier `index.html`. Le jeu ne peut fonctionner que dans un navigateur moderne.
 
-# Développement
+## Mise à jour
+Les mises à jour du logiciel peuvent se faire avec git.
+Les modifications des fichiers de configuration peuvent être
+versionnés en local mais ne doivent pas être poussés.
+```shell
+# Désactiver push en production
+git remote set-url --push origin no_push
+# Téléchargement des nouveaux commits
+git pull
+# Redémarrage du serveur
+sudo systemctl restart nginx
+ps -aux |grep "[n]ode server.js" |awk '{print $2}' |sudo xargs -r kill
+nohup node server.js >> logs.out &
+```
 
+# Développement
 ## Changer numéro de version
 Modifier la version du package Node.js côté serveur.
 Crée automatiquement un tag git.
