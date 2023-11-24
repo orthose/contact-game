@@ -34,21 +34,21 @@ function connectionError() {
 
 // Ne pas appeler dans connectServer pour éviter boucle infinie
 function onclose(ev) {
-    function reconnectLoop(isready) {
+    function reconnectLoop(isready, failure) {
         document.getElementById("network").style = "display: block";
         connectServer(); // Tentative initiale de reconnexion au serveur
         // Boucle de reconnexion
         let retry = 0; retryTimer = setInterval(() => {
             if (retry < config["maxRetry"]) {
                 // On doit attendre que le nouveau socket soit connecté
-                if (ws.readyState === WebSocket.OPEN) { isready(retryTimer); }
+                if (ws.readyState === WebSocket.OPEN) { isready(); }
                 // Si le socket n'est pas connecté alors on essaye de le reconnecter 
                 else { ws.close(); connectServer(); } 
                 retry++;
             }
             else {
                 clearInterval(retryTimer);
-                connectionError();
+                failure();
             }
         }, config["retryInterval"]);
     }
@@ -56,18 +56,21 @@ function onclose(ev) {
     // Le joueur possède-t-il une session ?
     if (pseudo !== "" && sid !== "") {
         // Demande de restauration de session
-        reconnectLoop(() => { send({"type": "restore", "pseudo": pseudo, "sid": sid}); });
+        reconnectLoop(
+            () => { send({"type": "restore", "pseudo": pseudo, "sid": sid}); }, 
+            () => { location.reload(); });
     }
     // On est sur la page d'accueil
     else {
         // Tentative de reconnexion
-        reconnectLoop((retryTimer) => {
+        reconnectLoop(() => {
+            // Désactivation de la boucle
             clearInterval(retryTimer);
             // Suppression du message de reconnexion
             document.getElementById("network").style = "display: none";
             // On réactive la fonction appelée en cas de fermeture de socket
             ws.onclose = onclose;
-        });
+        }, connectionError);
     }
 }
 

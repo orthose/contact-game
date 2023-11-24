@@ -30,6 +30,8 @@ const requests = {
             document.getElementById("network").style = "display: none";
             // On réactive la fonction appelée en cas de fermeture de socket
             ws.onclose = onclose;
+        } else {
+            location.reload();
         }
     },
 

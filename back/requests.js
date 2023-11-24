@@ -56,7 +56,7 @@ export function restore(rq, sg, sl) {
         // Le session id est-il valide ?
         && rq["sid"] === sg.players[rq["pseudo"]]["sid"]
     );
-    let res = []; // En cas de restauration invalide on ne répond pas
+    let res = [{"type": "restore", "pseudo": rq["pseudo"], "accepted": isvalid}];
     if (isvalid) {
         // Arrêt du délai de suppression du joueur
         clearTimeout(sg.players[rq["pseudo"]]["closeTimer"]);
@@ -64,7 +64,6 @@ export function restore(rq, sg, sl) {
         sl.pseudo = rq["pseudo"];
         sg.players[sl.pseudo]["ws"] = sl.ws;
         console.log("<", sl.pseudo, "session restored >");
-        res.push({"type": "restore", "pseudo": rq["pseudo"], "accepted": isvalid});
         // Si le joueur est dans une partie alors on l'informe de l'état actuel
         // Dans la plupart des cas si la déconnexion n'est pas longue ce n'est pas utile
         // Si le joueur a raté beaucoup de messages alors il doit attendre
