@@ -53,7 +53,8 @@ const requests = {
             role = leader === pseudo ? "leader" : "detective";
             // Affichage du nom de partie
             document.querySelector("#game").style = "display: block";
-            document.querySelector("#game span").textContent = game;
+            document.querySelector("#game span").innerHTML = rq["visibility"] === "public" 
+            ? game:`<img src="./assets/img/lock-white.png" width="16px" height="16px">${game}`;
             // Affichage du nombre d'essais restants
             document.querySelector("#ntry").style = "display: block";
             pages.printLifes(rq["ntry"]);
