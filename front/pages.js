@@ -168,8 +168,11 @@ const pages = {
 
     listPlayers: function() {
         function createPlayer(player) {
-            if (player === leader) { player = "⭐ " + player; }
-            return createElement("li", {id: player, textContent: player});
+            const kwargs = {id: player, innerHTML: player};
+            if (player === leader) { 
+                kwargs.innerHTML = `<img src="./assets/img/star-white.png" width="16px" height="16px">` + player;
+            }
+            return createElement("li", kwargs);
         }
         const ul = document.querySelector("#players ul");
         ul.innerHTML = "";
