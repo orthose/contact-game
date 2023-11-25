@@ -206,6 +206,14 @@ export function secret(rq, sg, sl) {
     return res;
 }
 
+// Mise à jour de l'indice
+export function updateHint(rq, sg, sl) {
+    const game = sg.players[sl.pseudo]["game"];
+    const letters = sg.games[game]["letters"];
+    const secret = sg.games[game]["secret"].slice(0,letters);
+    return {"send": {"type": "hint", "word": secret}};
+}
+
 // Proposer une défintion
 export function definition(rq, sg, sl) {
     const res = {};
@@ -403,6 +411,10 @@ export const requests = {
             );
         },
         "callback": secret
+    },
+    "updateHint": {
+        "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
+        "callback": updateHint
     },
     "definition": {
         "precheck": (rq, sg, sl) => {

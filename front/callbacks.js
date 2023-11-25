@@ -39,6 +39,10 @@ const callbacks = {
         const secret = document.getElementById("secret_input").value;
         if (secret) { send({"type": "secret", "word": secret}); }
     },
+
+    updateHint: function() {
+        if (game) { send({"type": "updateHint"}); }
+    },
     
     definition: function() {
         const word = document.getElementById("word_input").value;

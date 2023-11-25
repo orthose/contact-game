@@ -176,7 +176,7 @@ img {
     margin-right: 5px;
 }
 
-#players > img:hover {
+#players > img:hover, #secret > img:hover {
     background-color: rgb(175,238,238);
     border-radius: 30px;
 }
@@ -197,7 +197,7 @@ img {
     color: white;
     padding: 3px 5px;
     margin-right: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     white-space: nowrap;
     overflow-x: scroll;
     max-width: 100px;
