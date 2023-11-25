@@ -22,7 +22,7 @@ const requests = {
             // Masquer les règles
             document.getElementById("rules").style = "display: none";
             // Formulaire de création de partie
-            pages.chooseGame();
+            pages.chooseGame(rq["publicGames"]);
         } else {
             pages.invalidInput(document.getElementById("pseudo_input"));
         }
@@ -47,7 +47,6 @@ const requests = {
         // Rejoindre une salle
         // Pas de champ accepted si changement de meneur
         if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
-            requests.quitGame();
             game = rq["game"];
             leader = rq["leader"];
             players = new Set(rq["players"]);
@@ -83,7 +82,7 @@ const requests = {
         // Nettoyer les balises d'information du header
         pages.quitGame();
         // Retour à la page de choix de partie
-        pages.chooseGame();
+        pages.chooseGame(rq["publicGames"]);
     },
 
     // Fin de partie

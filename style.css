@@ -49,20 +49,28 @@ body {
     display: none;
 }
 
-#status {
+#status, #publicGames .row {
     width: fit-content;
     border-radius: 15px;
     padding: 4px 5px;
 }
 
-#status:hover {
+#status:hover, #publicGames .row:hover {
     cursor: pointer;
     background-color: rgb(175,238,238);;
 }
 
-#status span {
+#status span, #publicGames span {
     overflow: scroll;
     vertical-align: middle;
+}
+
+#publicGames span {
+    margin: 0px 5px;
+}
+
+#publicGames {
+    margin-top: 80px; 
 }
 
 #quit {
@@ -85,7 +93,7 @@ button, input {
     -webkit-border-radius: 0px;
 }
 
-input, textarea {
+input[type="text"], textarea {
     box-sizing: border-box;
     width: 100%;
     height: 35px;
@@ -97,7 +105,7 @@ input, textarea {
 }
 
 /* https://stackoverflow.com/a/39155868 */
-input::placeholder {
+input[type="text"]::placeholder {
     color: darkblue;
     opacity: 0.5;
 }
@@ -114,6 +122,25 @@ textarea {
     resize: vertical;
     font-size: normal;
     min-height: 70px;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: solid 2px darkblue;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+input[type="checkbox"] + label {
+    font-size: large;
+    vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+    background-color: darkblue;
+    background-clip: content-box;
+    box-shadow: inset 0 0 0 2px white;
 }
 
 button {

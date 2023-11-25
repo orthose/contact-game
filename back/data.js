@@ -14,11 +14,12 @@ export const players = {};
 /**
  * Objet stockant l'état des parties
  * 
- * {"game1": {"secret": "tomate", "letters": 1, "words": Set(), "ntry": 5,
+ * {"game1": {"visibility": "public", "secret": "tomate", "letters": 1, "words": Set(), "ntry": 5,
  *            "leader": "pseudo1", "ndef": 2, "def": {0: "tome", 2: "tomate", ...},
  *            "players": {"pseudo2": Set(0, 2), ...}}, ...}
  * 
  * "game1": identifiant unique de la partie
+ * "visibility": partie publique ou privée
  * "secret": mot secret choisi par le meneur
  * "letters": nombre de lettres obtenues par les détectives
  * "words": mots déjà révélés ne pouvant plus être utilisés

@@ -19,13 +19,23 @@
  * @return objet de réponse à renvoyer au client
  */
 
+import { config } from "./config.js";
 import { getRole } from "./data.js";
 import * as checks from "./checks.js";
-import { htmlspecialchars, formatInput, randomPassword } from "./utils.js";
+import { htmlspecialchars, formatInput, randomPassword, shuffle } from "./utils.js";
 
 // Statistiques actuelles du serveur
 export function status(rq, sg, sl) {
     return {"send": {"type": "status", "onlinePlayers": Object.keys(sg.players).length, "currentGames": Object.keys(sg.games).length}};
+}
+
+// Sélection aléatoire de parties ayant une visibilité publique
+function selectPublicGames(sg) {
+    const publicGames = Object.entries(sg.games)
+        .filter(([_,v]) => v["visibility"] === "public")
+        .map(([k,v]) => {return {"game": k, "players": Object.keys(v["players"]).length}});
+    shuffle(publicGames);
+    return publicGames.slice(0, config["maxSelectedGames"])
 }
 
 // Enregistrer un nouveau joueur lors de sa première connexion
@@ -44,7 +54,8 @@ export function register(rq, sg, sl) {
         sg.players[sl.pseudo] = {"ws": sl.ws, "sid": sid, "closeTimer": null, "game": ""};
         console.log("<", sl.pseudo, "registered >");
     }
-    return {"send": {"type": "register", "pseudo": rq["pseudo"], "sid": sid, "accepted": isvalid}};
+    return {"send": {"type": "register", "pseudo": rq["pseudo"], "sid": sid, "accepted": isvalid,
+    "publicGames": selectPublicGames(sg)}};
 }
 
 // Déconnecter le joueur courant
@@ -102,8 +113,8 @@ export function joinGame(rq, sg, sl) {
         if (!sg.games.hasOwnProperty(game)) {
             console.log("< game", game, "created by", sl.pseudo, ">");
             sg.games[game] = {
-                "secret": "", "letters": 1, "words": new Set(), "ntry": 5, "ndef": 0, "def": {},
-                "leader": sl.pseudo, "players": {[sl.pseudo]: new Set()}
+                "visibility": rq["visibility"], "secret": "", "letters": 1, "words": new Set(), 
+                "ntry": 5, "ndef": 0, "def": {}, "leader": sl.pseudo, "players": {[sl.pseudo]: new Set()}
             };
         }
         // La partie existe déjà 
@@ -113,11 +124,13 @@ export function joinGame(rq, sg, sl) {
         }
         sg.players[sl.pseudo]["game"] = game;
 
+        const visibility = sg.games[game]["visibility"];
         const ntry = sg.games[game]["ntry"];
         const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
         const leader = sg.games[game]["leader"];
         // Informations de la partie transmises au joueur
-        return {"send": {"type": "joinGame", "game": game, "ntry": ntry, "secret": secret, "leader": leader, 
+        return {"send": {"type": "joinGame", "game": game, "visibility": visibility, 
+        "ntry": ntry, "secret": secret, "leader": leader, 
         "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid},
         // Diffusion du nouvel arrivant aux autres joueurs de la partie
         "broadcast": {"type": "addPlayer", "pseudo": sl.pseudo}, "game": game};
@@ -131,7 +144,8 @@ export function joinGame(rq, sg, sl) {
 export function quitGame(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
-    const res = {"send": {"type": "quitGame", "accepted": true}};
+    const res = {"send": {"type": "quitGame", "accepted": true, 
+    "publicGames": selectPublicGames(sg)}};
     console.log("<", sl.pseudo, "left", game, ">");
 
     // Le joueur quitte la liste des participants
@@ -361,7 +375,7 @@ export const requests = {
         "callback": restore
     },
     "joinGame": {
-        "precheck": (rq, sg, sl) => rq["game"] !== "" && sl.pseudo !== "",
+        "precheck": (rq, sg, sl) => rq["game"] !== "" && ["public", "private"].includes(rq["visibility"]) && sl.pseudo !== "",
         "callback": joinGame
     },
     "quitGame": {

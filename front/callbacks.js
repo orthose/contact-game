@@ -23,7 +23,8 @@ const callbacks = {
     
     joinGame: function() {
         const game = document.getElementById("game_input").value;
-        if (game) { send({"type": "joinGame", "game": game}); }
+        const visibility = document.getElementById("visibility_input").checked ? "public":"private";
+        if (game) { send({"type": "joinGame", "game": game, "visibility": visibility}); }
     },
     
     quitGame: function() {

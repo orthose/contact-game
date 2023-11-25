@@ -29,3 +29,11 @@ export function randomPassword(length) {
         do { crypto.getRandomValues(r); 
         } while(r[0] > max); return chars[r[0] % chars.length]; })(x)).join('');
 }
+
+/* https://stackoverflow.com/a/12646864 */
+export function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}

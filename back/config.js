@@ -7,6 +7,7 @@ export const config = {
     "minInputLength": 1,
     "maxInputLength": 16,
     "maxDefLength": 512,
+    "maxSelectedGames": 10,
     "ntry": 5,
     "closeTimeout": 3*60*1000,
 };

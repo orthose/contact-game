@@ -48,12 +48,23 @@ const pages = {
         pages.listPlayers();
     },
 
-    chooseGame: function() {
+    chooseGame: function(publicGames) {
         const quit = document.getElementById("quit");
         quit.style = "display: float";
         quit.onclick = callbacks.unregister;
         const main = document.querySelector("main");
         main.innerHTML = "";
+        const divVisibility = createElement("div", {style: "margin-bottom: 15px"});
+        divVisibility.appendChild(createElement("input", {
+            type: "checkbox", id: "visibility_input", name: "visibility", checked: "true",
+            onchange: (checkbox) => {
+                checkbox.target.nextElementSibling.textContent = checkbox.target.checked ? "Publique":"Privée";
+            },
+        }));
+        divVisibility.appendChild(createElement("label", {
+            htmlFor: "visibility", textContent: "Publique",
+        }));
+        main.appendChild(divVisibility);
         main.appendChild(createElement("input", {
             type: "text", id: "game_input", placeholder: "Salle",
         }));
@@ -61,6 +72,15 @@ const pages = {
             textContent: "Rejoindre", 
             onclick: callbacks.joinGame,
         }));
+        const divGames = createElement("div", {id: "publicGames"});
+        publicGames.forEach((g) => {
+            const divRow = createElement("div", {className: "row", onclick: () => {
+                document.getElementById("game_input").value = g["game"];
+            }, innerHTML:`<img src="./assets/img/player.png" width="32px" height="32px"><span>`+g["players"]
+            +`</span><img src="./assets/img/home.png" width="32px" height="32px"><span>`+g["game"]+`</span>`});
+            divGames.appendChild(divRow);
+        });
+        main.appendChild(divGames);
     },
 
     printLifes: function(ntry) {
