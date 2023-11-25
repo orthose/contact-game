@@ -122,6 +122,12 @@ const requests = {
         pages.listPlayers();
     },
 
+    // Proposition de mot aléatoire
+    randomWord: function(rq) {
+        const input = document.getElementById("secret_input");
+        if (input !== null) { input.value = rq["word"]; }
+    },
+
     // Choisir un mot secret
     secret: function(rq) {
         // Validation du mot secret du meneur

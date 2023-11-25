@@ -188,6 +188,11 @@ export function updatePlayers(rq, sg, sl) {
     "leader": sg.games[game]["leader"]}};
 }
 
+// Mot au hasard dans le dictionnaire
+export function randomWord(rq, sg, sl) {
+    return {"send": {"type": "randomWord", "word": checks.getRandomWord()}};
+}
+
 // Proposer un mot secret
 export function secret(rq, sg, sl) {
     const secret = formatInput(rq["word"]);
@@ -400,6 +405,10 @@ export const requests = {
     "updatePlayers": {
         "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
         "callback": updatePlayers
+    },
+    "randomWord": {
+        "precheck": (rq, sg, sl) => sl.pseudo !== "" && getRole(sg, sl) === "leader" && sg.players[sl.pseudo]["game"] !== "",
+        "callback": randomWord
     },
     "secret": {
         "precheck": (rq, sg, sl) => {

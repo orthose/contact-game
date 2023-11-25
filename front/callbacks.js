@@ -34,6 +34,10 @@ const callbacks = {
     updatePlayers: function() {
         if (game) { send({"type": "updatePlayers"}); }
     },
+
+    randomWord: function() {
+        send({"type": "randomWord"});
+    },
     
     secret: function() {
         const secret = document.getElementById("secret_input").value;

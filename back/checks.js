@@ -2,7 +2,8 @@ import { config } from "./config.js";
 import fs from "fs";
 
 // Chargement du dictionnaire synchrone une seule fois
-const dico = new Set(fs.readFileSync(config["dico"], "utf8").split("\n"));
+const dicoSet = new Set(fs.readFileSync(config["dico"], "utf8").split("\n"));
+const dicoArray = Array.from(dicoSet);
 
 /**
  * Le mot existe-t-il dans le dictionnaire ?
@@ -11,7 +12,17 @@ const dico = new Set(fs.readFileSync(config["dico"], "utf8").split("\n"));
  * @returns true si le mot existe false sinon
  */
 export function wordExists(word) {
-    return dico.has(word);
+    return dicoSet.has(word);
+}
+
+/**
+ * Donne un mot aléatoire du dictionnaire 
+ * Complexité constante
+ * 
+ * @returns chaîne de caractères
+ */
+export function getRandomWord() {
+    return dicoArray[Math.floor(Math.random()*dicoArray.length)];
 }
 
 /**

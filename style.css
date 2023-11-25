@@ -223,6 +223,17 @@ div#game {
     margin-bottom: 12px;
 }
 
+#secret_input {
+    width: calc(100% - 35px);
+}
+
+#secret_input + button {
+    display: inline-block;
+    padding-top: 18px;
+    padding-bottom: 17px;
+    margin-left: 0px;
+}
+
 div#secret > span {
     display: inline-block;
     vertical-align: middle;

@@ -96,6 +96,10 @@ const pages = {
             type: "text", id: "secret_input", placeholder: "Mot Secret",
         }));
         main.appendChild(createElement("button", {
+            textContent: "?", 
+            onclick: callbacks.randomWord,
+        }));
+        main.appendChild(createElement("button", {
             textContent: "Envoyer",
             onclick: callbacks.secret,
         }));
