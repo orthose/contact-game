@@ -181,6 +181,13 @@ export function quitGame(rq, sg, sl) {
     return res;
 }
 
+// Mise à jour de la liste des joueurs de la partie en cours
+export function updatePlayers(rq, sg, sl) {
+    const game = sg.players[sl.pseudo]["game"];
+    return {"send": {"type": "updatePlayers", "players": Object.keys(sg.games[game]["players"]), 
+    "leader": sg.games[game]["leader"]}};
+}
+
 // Proposer un mot secret
 export function secret(rq, sg, sl) {
     const secret = formatInput(rq["word"]);
@@ -381,6 +388,10 @@ export const requests = {
     "quitGame": {
         "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
         "callback": quitGame
+    },
+    "updatePlayers": {
+        "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
+        "callback": updatePlayers
     },
     "secret": {
         "precheck": (rq, sg, sl) => {

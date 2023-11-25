@@ -115,6 +115,13 @@ const requests = {
         pages.listPlayers();
     },
 
+    // Mettre à jour la liste des joueurs
+    updatePlayers: function(rq) {
+        leader = rq["leader"];
+        players = new Set(rq["players"]);
+        pages.listPlayers();
+    },
+
     // Choisir un mot secret
     secret: function(rq) {
         // Validation du mot secret du meneur

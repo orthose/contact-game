@@ -30,6 +30,10 @@ const callbacks = {
     quitGame: function() {
         if (game) { send({"type": "quitGame"}); }
     },
+
+    updatePlayers: function() {
+        if (game) { send({"type": "updatePlayers"}); }
+    },
     
     secret: function() {
         const secret = document.getElementById("secret_input").value;

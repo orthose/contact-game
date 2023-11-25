@@ -57,7 +57,7 @@ body {
 
 #status:hover, #publicGames .row:hover {
     cursor: pointer;
-    background-color: rgb(175,238,238);;
+    background-color: rgb(175,238,238);
 }
 
 #status span, #publicGames span {
@@ -174,6 +174,11 @@ img {
 #players ul li img  {
     vertical-align: baseline;
     margin-right: 5px;
+}
+
+#players > img:hover {
+    background-color: rgb(175,238,238);
+    border-radius: 30px;
 }
 
 :is(header, main) ul {
