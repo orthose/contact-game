@@ -81,7 +81,7 @@ wss.on("connection", function(ws) {
                 if (rp.hasOwnProperty("broadcast")) { 
                     batch((json) => broadcast(json, game), rp["broadcast"]); 
                 }
-            }, config["closeTimeout"]);
+            }, sl["unregister"] ? 0 : config["closeTimeout"]);
         }
     }
 

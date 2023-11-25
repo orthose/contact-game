@@ -61,6 +61,8 @@ export function register(rq, sg, sl) {
 
 // Déconnecter le joueur courant
 export function unregister(rq, sg, sl) {
+    // Suppression immédiate du joueur sans délai
+    sl["unregister"] = true;
     sl.ws.close();
     return {};
 }
