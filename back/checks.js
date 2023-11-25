@@ -6,6 +6,17 @@ const dicoSet = new Set(fs.readFileSync(config["dico"], "utf8").split("\n"));
 const dicoArray = Array.from(dicoSet);
 
 /**
+ * La chaîne de caractères est-elle remplie ?
+ * https://stackoverflow.com/a/64704021
+ * 
+ * @param str Chaîne de caractères
+ * @returns true si remplie false sinon
+ */
+export function isfilled(str) {
+    return str ? true : false;
+}
+
+/**
  * Le mot existe-t-il dans le dictionnaire ?
  * 
  * @param word Chaîne de caractères du mot à tester 

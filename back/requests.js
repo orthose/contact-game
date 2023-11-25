@@ -22,6 +22,7 @@
 import { config } from "./config.js";
 import { getRole } from "./data.js";
 import * as checks from "./checks.js";
+import { isfilled } from "./checks.js";
 import { htmlspecialchars, formatInput, randomPassword, shuffle } from "./utils.js";
 
 // Statistiques actuelles du serveur
@@ -85,7 +86,7 @@ export function restore(rq, sg, sl) {
         // Si le joueur a raté beaucoup de messages alors il doit attendre
         // le prochain contact pour mettre à jour l'état de la partie
         // Dans le pire des cas il peut manquer une fin de partie
-        /*if (sg.players[sl.pseudo]["game"] !== "") {
+        /*if (isfilled(sg.players[sl.pseudo]["game"])) {
             const game = sg.players[sl.pseudo]["game"];
             const ntry = sg.games[game]["ntry"];
             const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
@@ -383,67 +384,67 @@ export const requests = {
         "callback": status
     },
     "register": {
-        "precheck": (rq, sg, sl) => rq["pseudo"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(rq["pseudo"]),
         "callback": register
     },
     "unregister": {
-        "precheck": (rq, sg, sl) => sl.pseudo !== "",
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo),
         "callback": unregister
     },
     "restore": {
-        "precheck": (rq, sg, sl) => rq["pseudo"] !== "" && rq["sid"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(rq["pseudo"]) && isfilled(rq["sid"]),
         "callback": restore
     },
     "joinGame": {
-        "precheck": (rq, sg, sl) => rq["game"] !== "" && ["public", "private"].includes(rq["visibility"]) && sl.pseudo !== "",
+        "precheck": (rq, sg, sl) => isfilled(rq["game"]) && ["public", "private"].includes(rq["visibility"]) && isfilled(sl.pseudo),
         "callback": joinGame
     },
     "quitGame": {
-        "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
         "callback": quitGame
     },
     "updatePlayers": {
-        "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
         "callback": updatePlayers
     },
     "randomWord": {
-        "precheck": (rq, sg, sl) => sl.pseudo !== "" && getRole(sg, sl) === "leader" && sg.players[sl.pseudo]["game"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && getRole(sg, sl) === "leader" && isfilled(sg.players[sl.pseudo]["game"]),
         "callback": randomWord
     },
     "secret": {
         "precheck": (rq, sg, sl) => {
             return (
-                rq["word"] !== "" && sl.pseudo !== "" 
+                isfilled(rq["word"]) && isfilled(sl.pseudo) 
                 && getRole(sg, sl) === "leader" 
-                && sg.players[sl.pseudo]["game"] !== "" 
+                && isfilled(sg.players[sl.pseudo]["game"]) 
                 && sg.games[sg.players[sl.pseudo]["game"]]["secret"] === ""
             );
         },
         "callback": secret
     },
     "updateHint": {
-        "precheck": (rq, sg, sl) => sl.pseudo !== "" && sg.players[sl.pseudo]["game"] !== "",
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
         "callback": updateHint
     },
     "definition": {
         "precheck": (rq, sg, sl) => {
             return (
-                rq["def"] !== "" && rq["word"] !== "" && sl.pseudo !== ""
+                isfilled(rq["def"]) && isfilled(rq["word"]) && isfilled(sl.pseudo)
                 && getRole(sg, sl) === "detective" 
-                && sg.players[sl.pseudo]["game"] !== ""
-                && sg.games[sg.players[sl.pseudo]["game"]]["secret"] !== ""
+                && isfilled(sg.players[sl.pseudo]["game"])
+                && isfilled(sg.games[sg.players[sl.pseudo]["game"]]["secret"])
             );
         },
         "callback": definition
     },
     "contact": {
         "precheck": (rq, sg, sl) => { 
-            let res = rq["word"] !== "" && typeof rq["ndef"] === "number" && sl.pseudo !== "";
+            let res = isfilled(rq["word"]) && typeof rq["ndef"] === "number" && isfilled(sl.pseudo);
             if (res) {
                 const game = sg.players[sl.pseudo]["game"];
                 const ndef = rq["ndef"];
                 res &&= (
-                    game !== "" && sg.games[game]["secret"] !== ""
+                    isfilled(game) && isfilled(sg.games[game]["secret"])
                     // Le numéro de définition existe-t-il ? 
                     && sg.games[game]["def"].hasOwnProperty(ndef)
                     // Le joueur n'a pas pas proposé cette définition ?
