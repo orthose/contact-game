@@ -31,7 +31,7 @@
     <script src="./front/requests.js"></script>
     <script src="./browser.js"></script>
 </head>
-<body onload="pages.register()">
+<body onload="pages.register();pages.printScore()">
     <header>
         <img id="quit" src="./assets/img/exit.png" style="display:none"
             onmouseleave="this.src = './assets/img/exit.png'"
@@ -41,6 +41,12 @@
             <span id="onlinePlayers"></span>
             <img src="./assets/img/home.png" width="32px" height="32px">
             <span id="currentGames"></span>
+        </div>
+        <div id="score" style="display:inline-block">
+            <img src="./assets/img/trophy.png" width="32px" height="32px">
+            <span id="wonGames"></span>
+            <img src="./assets/img/death-black.png" width="32px" height="32px">
+            <span id="lostGames"></span>
         </div>
         <h1>Contact Game</h1>
         <div id="network" style="display:none"><div class="lds-dual-ring"></div>&nbsp;Reconnexion en cours…</div>

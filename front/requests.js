@@ -6,7 +6,7 @@
 const requests = {
     // Statut du serveur
     status: function(rq) {
-        document.getElementById("status").style = "display: block"; 
+        document.getElementById("status").style = "display: inline-block"; 
         document.getElementById("onlinePlayers").textContent = rq["onlinePlayers"];
         document.getElementById("currentGames").textContent = rq["currentGames"];
     },

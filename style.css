@@ -49,7 +49,7 @@ body {
     display: none;
 }
 
-#status, #publicGames .row {
+#status, #score, #publicGames .row {
     width: fit-content;
     border-radius: 15px;
     padding: 4px 5px;
@@ -60,7 +60,7 @@ body {
     background-color: rgb(175,238,238);
 }
 
-#status span, #publicGames span {
+#status span, #score span, #publicGames span {
     overflow: scroll;
     vertical-align: middle;
 }

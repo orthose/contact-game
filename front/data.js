@@ -8,3 +8,9 @@ let game = ""; // Identifiant de la partie
 let role = ""; // leader | detective
 let leader = ""; // Identifiant du meneur
 let secret = ""; // Mot indice
+
+// Nombre de parties gagnées et perdues
+if (localStorage.getItem("wonGames") === null) {
+    localStorage.setItem("wonGames", "0");
+    localStorage.setItem("lostGames", "0");
+}

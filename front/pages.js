@@ -22,6 +22,11 @@ const pages = {
         };
     },
 
+    printScore: function() {
+        document.getElementById("wonGames").textContent = localStorage.getItem("wonGames");
+        document.getElementById("lostGames").textContent = localStorage.getItem("lostGames");
+    },
+
     register: function() {
         const main = document.querySelector("main");
         main.innerHTML = "";
@@ -157,11 +162,14 @@ const pages = {
             className = "winner";
             src = "./assets/img/trophy.png";
             msg = "GAGNÉ&nbsp;!";
+            localStorage.setItem("wonGames", parseInt(localStorage.getItem("wonGames"))+1);
         } else {
             className = "looser";
             src = "./assets/img/death.png";
             msg = "PERDU&nbsp;!";
+            localStorage.setItem("lostGames", parseInt(localStorage.getItem("lostGames"))+1);
         }
+        pages.printScore();
         const div = createElement("div", {id: "end_game", className: className});
         div.innerHTML = `<img src="${src}"><span>${msg}</span>`;
         document.querySelector("main").appendChild(div);
