@@ -175,11 +175,35 @@ export const config = {
 Par défaut, le client essaye de demander 15 fois à 2 secondes d'intervalle 
 une restauration de session auprès du serveur. Sachant qu'une connexion initiale
 au websocket prend au maximum 250 ms si le réseau est disponible.
+Si la demande échoue, la page d'accueil est automatiquement rechargée.
+Si le serveur n'arrive pas à instancier un nouveau socket alors le scénario
+ci-dessous est activé.
 Ces paramètres peuvent être configurés dans `front/config.js`.
 ```js
 const config = {
-    "maxRetry": 6,
-    "retryInterval": 5000,
+    "maxRetry": 15,
+    "retryInterval": 2000,
+}
+```
+
+Lorsque le joueur n'a pas encore choisi de pseudo il n'a pas de session.
+Si le socket se ferme à ce moment, alors le client essayera de la même
+manière de réinitialiser le socket 15 fois à 2 secondes d'intervalle.
+S'il n'y parvient pas, alors il affichera un message d'erreur.
+
+En règle générale, lorsqu'un socket est fermé le serveur en est averti.
+Mais il peut arriver que ce ne soit pas le cas et il y alors un risque
+de maintenir des connexions fantôme qui engendrent des fuites mémoire.
+Pour résoudre ce problème un mécanisme de ping/pong est mis en place
+côté serveur. Toutes les 5 minutes, il vérifie la connexion de tous
+les clients en leur envoyant un `ping`. Si dans les 5 minutes
+suivantes il ne reçoit pas un `pong` alors il considère la connexion
+du client concerné comme interrompue. Le délai de 3 minutes avant la suppression
+de la session s'active alors. Le paramètre de l'intervalle du ping/pong
+se configure dans `back/config.js`.
+```js
+export const config = {
+    "pingInterval": 5*60*1000,
 }
 ```
 

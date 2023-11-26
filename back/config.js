@@ -1,5 +1,7 @@
 export const config = {
     "port": 8080,
+    "pingInterval": 5*60*1000,
+    "closeTimeout": 3*60*1000,
     "certfile": "./certs/localhost.crt",
     "keyfile": "./certs/localhost.key",
     "dico": "./assets/dico/ods6.txt",
@@ -9,5 +11,4 @@ export const config = {
     "maxDefLength": 512,
     "maxSelectedGames": 10,
     "ntry": 5,
-    "closeTimeout": 3*60*1000,
 };

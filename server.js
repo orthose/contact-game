@@ -19,6 +19,10 @@ const wss = new WebSocketServer({ server });
 const sg = {players: players, games: games}
 
 wss.on("connection", function(ws) {
+    // Le client est-il toujours connecté ?
+    ws.isAlive = true;
+    ws.on("pong", () => { ws.isAlive = true; });
+
     // Scope local du joueur courant
     const sl = {pseudo: "", ws: ws};
 
@@ -87,5 +91,14 @@ wss.on("connection", function(ws) {
 
     //ws.on('error', console.error);
 });
+
+// Vérification de la connexion de chaque client à intervalle régulier
+// Pour éviter des connexions fantôme engendrant des fuites mémoire
+const pingTimer = setInterval(function() {
+    wss.clients.forEach(function(ws) {
+        if (!ws.isAlive) { return ws.close() };
+        ws.isAlive = false; ws.ping();
+    });
+}, config["pingInterval"]);
 
 server.listen(config["port"]);
