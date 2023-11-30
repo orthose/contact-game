@@ -19,6 +19,9 @@ const wss = new WebSocketServer({ server });
 const sg = {players: players, games: games}
 
 wss.on("connection", function(ws) {
+    // Durée avant suppression du joueur lors de la déconnexion
+    ws.closeTimeout = config["closeTimeout"];
+
     // Le client est-il toujours connecté ?
     ws.isAlive = true;
     ws.on("pong", () => { ws.isAlive = true; });
@@ -85,7 +88,7 @@ wss.on("connection", function(ws) {
                 if (rp.hasOwnProperty("broadcast")) { 
                     batch((json) => broadcast(json, game), rp["broadcast"]); 
                 }
-            }, sl["unregister"] ? 0 : config["closeTimeout"]);
+            }, ws.closeTimeout);
         }
     }
 
@@ -96,7 +99,9 @@ wss.on("connection", function(ws) {
 // Pour éviter des connexions fantôme engendrant des fuites mémoire
 const pingTimer = setInterval(function() {
     wss.clients.forEach(function(ws) {
-        if (!ws.isAlive) { return ws.close() };
+        if (!ws.isAlive) {
+            ws.closeTimeout = 0; ws.close(); return;
+        }
         ws.isAlive = false; ws.ping();
     });
 }, config["pingInterval"]);
