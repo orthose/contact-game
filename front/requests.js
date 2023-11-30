@@ -58,10 +58,11 @@ const requests = {
             // Affichage du nombre d'essais restants
             document.querySelector("#ntry").style = "display: block";
             pages.printLifes(rq["ntry"]);
-            // Affichage du mot secret ou indice si déjà renseigné
-            if (rq["secret"]) {
-                secret = rq["secret"]; 
-                pages.printSecret(rq["secret"]); 
+            // Affichage de l'indice pour les détectives si déjà renseigné
+            secret = rq["secret"];
+            if (rq["secret"] && role === "detective") {
+                pages.printSecret(rq["secret"]);
+                pages.updateDefSecret(rq["secret"]);
             }
             // Affichage des joueurs
             pages.listPlayers();
@@ -70,7 +71,7 @@ const requests = {
             // On supprime toutes les définitions sauf celles dans "def" ou marquées .solved
             if (rq.hasOwnProperty("def")) {
                 document.querySelectorAll("div.definition").forEach((div) => {
-                    if (!div.classList.contains("solved") && !rq["def"].includes(parseInt(div.id))) {
+                    if (!div.classList.contains("solved") && !rq["def"].includes(div.id)) {
                         div.remove();
                     }
                 });
@@ -80,7 +81,7 @@ const requests = {
             if (rq["secret"] === "" && role === "leader") { pages.chooseSecret(); }
 
             // Démarrage du jeu
-            else if (!rq.hasOwnProperty("def") && role === "detective") { pages.playGame(); }
+            else if (!rq.hasOwnProperty("def")) { pages.playGame(); }
 
         } else {
             pages.invalidInput(document.getElementById("game_input"));
@@ -106,12 +107,10 @@ const requests = {
             pages.printSecret(rq["word"]);
         }
         pages.endGame(rq["winner"]);
-        // Nécessaire pour ne pas avoir une ancienne version lors de l'appel à joinGame
-        // si des joueurs sont partis ou entrés entre temps
-        players = new Set(rq["players"]);
-        rq["players"] = players;
-        // Manche suivante d'une partie
-        pages.nextRound(rq);
+        // Si je suis le prochain meneur alors je choisis le mot secret
+        if (rq["leader"] === pseudo) { pages.nextRound(); }
+        // Les joueurs attendent le joinGame qui sera envoyé 
+        // à la réception du nouveau mot secret par le serveur
     },
 
     // Ajouter un nouveau joueur
@@ -135,11 +134,9 @@ const requests = {
     // Choisir un mot secret
     secret: function(rq) {
         // Validation du mot secret du meneur
-        if (rq["accepted"]) {
+        if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
             pages.printSecret(rq["word"]);
-            pages.foundLetters(1);
-            // Démarrage du jeu
-            pages.playGame();
+            pages.foundLetters(rq["letters"]);
         }
         // Mot secret invalide
         else {
@@ -150,9 +147,7 @@ const requests = {
     // Nouvel indice
     hint: function(rq) {
         secret = rq["word"];
-        document.querySelectorAll("#definition input.word_input").forEach((input) => {
-            input.setAttribute("placeholder", secret);
-        });
+        pages.updateDefSecret(secret);
 
         if (role === "leader") {
             pages.foundLetters(rq["word"].length);

@@ -90,12 +90,12 @@ export function restore(rq, sg, sl) {
             const game = sg.players[sl.pseudo]["game"];
             const visibility = sg.games[game]["visibility"];
             const ntry = sg.games[game]["ntry"];
+            const letters = sg.games[game]["letters"];
             const secret = sg.games[game]["secret"];
-            const hint = secret.slice(0, sg.games[game]["letters"]);
+            const hint = secret.slice(0, letters);
             const leader = sg.games[game]["leader"];
             res.push({"type": "joinGame", "game": game, "visibility": visibility, 
-            "ntry": ntry, "secret": sl.pseudo === leader ? secret : hint, 
-            "leader": leader, "players": Object.keys(sg.games[game]["players"]),
+            "ntry": ntry, "secret": hint, "leader": leader, "players": Object.keys(sg.games[game]["players"]),
             // On ne peut pas mettre à jour les définitions ou les contacts car on ne les stocke pas
             // On peut seulement demander au client de supprimer les définitions qui ne sont plus en jeu
             // Le client devra supprimer toutes les définitions sauf celles dans "def" ou marquées .solved
@@ -105,8 +105,10 @@ export function restore(rq, sg, sl) {
             
             // Pas besoin de diffuser le pseudo du joueur car il était déjà dans la partie
             
-            // Mise à jour des placeholder de définitions et des lettres trouvées pour le meneur
-            res.push({"type": "hint", "word": hint});
+            // Mise à jour des lettres trouvées pour le meneur
+            if (secret !== "" && getRole(sg, sl) === "leader") {
+                res.push({"type": "secret", "word": secret, "letters": letters});
+            }
         }
     }
     return {"send": res};
@@ -182,9 +184,11 @@ export function quitGame(rq, sg, sl) {
         // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
         // Alors on désigne un nouveau meneur
         if (role === "leader" && sg.games[game]["secret"] === "") {
+            const visibility = sg.games[game]["visibility"];
             const nextLeader = Object.keys(sg.games[game]["players"])[0];
             sg.games[game]["leader"] = nextLeader;
-            res["broadcast"].push({"type": "joinGame", "game": game, "ntry": 5, "secret": "", "leader": nextLeader, 
+            res["broadcast"].push({"type": "joinGame", "game": game, "visibility": visibility, 
+            "ntry": 5, "secret": "", "leader": nextLeader, 
             "players": Object.keys(sg.games[game]["players"])});
         }
     }
@@ -204,16 +208,25 @@ export function randomWord(rq, sg, sl) {
 export function secret(rq, sg, sl) {
     const secret = formatInput(rq["word"]);
     const game = sg.players[sl.pseudo]["game"];
+    const letters = sg.games[game]["letters"];
     // Le mot est-il dans le dictionnaire ?
     const isvalid = checks.wordExists(secret);
     // Informe le meneur si le mot est validé ou non
-    const res = {"send": {"type": "secret", "word": secret, "accepted": isvalid}};
+    const res = {"send": {"type": "secret", "word": secret, "letters": letters, "accepted": isvalid}};
     if (isvalid) {
         console.log("<", sl.pseudo, "choosed", secret, "for", game, ">");
         sg.games[game]["secret"] = secret;
-        // Diffusion à tous les joueurs de la première lettre
+        // Diffusion à tous les joueurs de la partie
+        // On ne diffuse pas seulement la première lettre 
+        // afin de généraliser pour les manches successives
         res["game"] = game;
-        res["broadcast"] = {"type": "hint", "word": secret.slice(0,1)};
+        const visibility = sg.games[game]["visibility"];
+        const ntry = sg.games[game]["ntry"];
+        const hint = sg.games[game]["secret"].slice(0, letters);
+        const leader = sg.games[game]["leader"];
+        res["broadcast"] = {"type": "joinGame", "game": game, "visibility": visibility, 
+        "ntry": ntry, "secret": hint, "leader": leader, "players": Object.keys(sg.games[game]["players"])};
+        // Pas besoin de diffuser le pseudo du meneur car il est déjà dans la partie
     }
     return res;
 }
@@ -337,9 +350,7 @@ export function contact(rq, sg, sl) {
     if (winner) {
         console.log("< end game winner", winner, ">");
         const nextLeader = winner === "leader" ? sg.games[game]["leader"] : sl.pseudo;
-        res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"],
-        "game": game, "visibility": sg.games[game]["visibility"], "ntry": 5, "secret": "", 
-        "leader": nextLeader, "players": Object.keys(sg.games[game]["players"])});
+        res.push({"type": "endGame", "winner": winner, "word": sg.games[game]["secret"], "leader": nextLeader});
         // Réinitialisation de la partie
         sg.games[game]["secret"] = "";
         sg.games[game]["letters"] = 1;

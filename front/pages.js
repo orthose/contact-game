@@ -126,6 +126,12 @@ const pages = {
         }
     },
 
+    updateDefSecret: function(secret) {
+        document.querySelectorAll("#definition input.word_input").forEach((input) => {
+            input.setAttribute("placeholder", secret);
+        });
+    },
+
     playGame: function() {
         const quit = document.getElementById("quit");
         quit.onclick = callbacks.quitGame;
@@ -147,12 +153,11 @@ const pages = {
         }
     },
 
-    nextRound: function(rq) {
-        rq["accepted"] = true;
+    nextRound: function() {
         const main = document.querySelector("main");
         main.appendChild(createElement("button", {
             textContent: "Continuer",
-            onclick: () => { pages.quitGame(); requests.joinGame(rq); },
+            onclick: () => { pages.chooseSecret(); },
         }));
     },
 
@@ -173,9 +178,14 @@ const pages = {
         const div = createElement("div", {id: "end_game", className: className});
         div.innerHTML = `<img src="${src}"><span>${msg}</span>`;
         document.querySelector("main").appendChild(div);
+        // Suppression des champs d'envoi de définition
         removeElement(document.getElementById("word_input"));
         removeElement(document.getElementById("def_input"));
         removeElement(document.getElementById("send_def"));
+        // Suppression des définitions non-résolues
+        document.querySelectorAll("div.definition").forEach((div) => {
+            if (!div.classList.contains("solved")) { div.remove(); }
+        });
     },
 
     listPlayers: function() {
