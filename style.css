@@ -176,11 +176,6 @@ img {
     margin-right: 5px;
 }
 
-#players > img:hover, #secret > img:hover {
-    background-color: rgb(175,238,238);
-    border-radius: 30px;
-}
-
 :is(header, main) ul {
     list-style: none;
     display: inline-block;

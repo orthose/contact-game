@@ -45,7 +45,7 @@ const requests = {
     // Rejoindre une partie
     joinGame: function(rq) {
         // Rejoindre une salle
-        // Pas de champ accepted si changement de meneur
+        // Pas de champ accepted si changement de meneur ou après restauration de session
         if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
             game = rq["game"];
             leader = rq["leader"];
@@ -66,11 +66,21 @@ const requests = {
             // Affichage des joueurs
             pages.listPlayers();
 
+            // Suppression des définitions en cas de restauration de session
+            // On supprime toutes les définitions sauf celles dans "def" ou marquées .solved
+            if (rq.hasOwnProperty("def")) {
+                document.querySelectorAll("div.definition").forEach((div) => {
+                    if (!div.classList.contains("solved") && !rq["def"].includes(parseInt(div.id))) {
+                        div.remove();
+                    }
+                });
+            }
+
             // Formulaire de choix du mot secret
-            if (role === "leader") { pages.chooseSecret(); }
+            if (rq["secret"] === "" && role === "leader") { pages.chooseSecret(); }
 
             // Démarrage du jeu
-            else if (role === "detective") { pages.playGame(); }
+            else if (!rq.hasOwnProperty("def") && role === "detective") { pages.playGame(); }
 
         } else {
             pages.invalidInput(document.getElementById("game_input"));
@@ -113,13 +123,6 @@ const requests = {
     // Supprimer un joueur
     removePlayer: function(rq) {
         players.delete(rq["pseudo"]);
-        pages.listPlayers();
-    },
-
-    // Mettre à jour la liste des joueurs
-    updatePlayers: function(rq) {
-        leader = rq["leader"];
-        players = new Set(rq["players"]);
         pages.listPlayers();
     },
 

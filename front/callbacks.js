@@ -31,10 +31,6 @@ const callbacks = {
         if (game) { send({"type": "quitGame"}); }
     },
 
-    updatePlayers: function() {
-        if (game) { send({"type": "updatePlayers"}); }
-    },
-
     randomWord: function() {
         send({"type": "randomWord"});
     },
@@ -42,10 +38,6 @@ const callbacks = {
     secret: function() {
         const secret = document.getElementById("secret_input").value;
         if (secret) { send({"type": "secret", "word": secret}); }
-    },
-
-    updateHint: function() {
-        if (game) { send({"type": "updateHint"}); }
     },
     
     definition: function() {

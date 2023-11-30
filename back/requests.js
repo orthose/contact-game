@@ -85,18 +85,31 @@ export function restore(rq, sg, sl) {
         console.log("<", sl.pseudo, "session restored >");
         // Si le joueur est dans une partie alors on l'informe de l'état actuel
         // Dans la plupart des cas si la déconnexion n'est pas longue ce n'est pas utile
-        // Si le joueur a raté beaucoup de messages alors il doit attendre
-        // le prochain contact pour mettre à jour l'état de la partie
-        // Dans le pire des cas il peut manquer une fin de partie
-        /*if (isfilled(sg.players[sl.pseudo]["game"])) {
+        // A priori TCP évite les pertes de paquets et préserve l'ordre d'envoi des données
+        // Donc pas de risque d'écraser une information plus récente
+        // Le joueur peut manquer des définitions, des contacts ou des fins de partie
+        if (isfilled(sg.players[sl.pseudo]["game"])) {
             const game = sg.players[sl.pseudo]["game"];
+            const visibility = sg.games[game]["visibility"];
             const ntry = sg.games[game]["ntry"];
-            const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
+            const secret = sg.games[game]["secret"];
+            const hint = secret.slice(0, sg.games[game]["letters"]);
             const leader = sg.games[game]["leader"];
+            res.push({"type": "joinGame", "game": game, "visibility": visibility, 
+            "ntry": ntry, "secret": sl.pseudo === leader ? secret : hint, 
+            "leader": leader, "players": Object.keys(sg.games[game]["players"]),
+            // On ne peut pas mettre à jour les définitions ou les contacts car on ne les stocke pas
+            // On peut seulement demander au client de supprimer les définitions qui ne sont plus en jeu
             // Le client devra supprimer toutes les définitions sauf celles dans "def" ou marquées .solved
-            res.push({"type": "updateGame", "ntry": ntry, "secret": secret, "leader": leader, 
-            "players": Object.keys(sg.games[game]["players"]), "def": Object.keys(sg.games[game]["def"])});
-        }*/
+            "def": Object.keys(sg.games[game]["def"])});
+            // Pour gérer le changement de partie il faudrait un champ "round" qu'on incrémente à chaque nouvelle manche
+            // Si le client voit que le round a augmenté alors il efface toutes les définitions
+            
+            // Pas besoin de diffuser le pseudo du joueur car il était déjà dans la partie
+            
+            // Mise à jour des placeholder de définitions et des lettres trouvées pour le meneur
+            res.push({"type": "hint", "word": hint});
+        }
     }
     return {"send": res};
 }
@@ -184,13 +197,6 @@ export function quitGame(rq, sg, sl) {
     return res;
 }
 
-// Mise à jour de la liste des joueurs de la partie en cours
-export function updatePlayers(rq, sg, sl) {
-    const game = sg.players[sl.pseudo]["game"];
-    return {"send": {"type": "updatePlayers", "players": Object.keys(sg.games[game]["players"]), 
-    "leader": sg.games[game]["leader"]}};
-}
-
 // Mot au hasard dans le dictionnaire
 export function randomWord(rq, sg, sl) {
     return {"send": {"type": "randomWord", "word": checks.getRandomWord()}};
@@ -212,14 +218,6 @@ export function secret(rq, sg, sl) {
         res["broadcast"] = {"type": "hint", "word": secret.slice(0,1)};
     }
     return res;
-}
-
-// Mise à jour de l'indice
-export function updateHint(rq, sg, sl) {
-    const game = sg.players[sl.pseudo]["game"];
-    const letters = sg.games[game]["letters"];
-    const secret = sg.games[game]["secret"].slice(0,letters);
-    return {"send": {"type": "hint", "word": secret}};
 }
 
 // Proposer une défintion
@@ -394,7 +392,7 @@ export const requests = {
         "callback": unregister
     },
     "restore": {
-        "precheck": (rq, sg, sl) => isfilled(rq["pseudo"]) && isfilled(rq["sid"]),
+        "precheck": (rq, sg, sl) => sl.pseudo === "" && isfilled(rq["pseudo"]) && isfilled(rq["sid"]),
         "callback": restore
     },
     "joinGame": {
@@ -404,10 +402,6 @@ export const requests = {
     "quitGame": {
         "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
         "callback": quitGame
-    },
-    "updatePlayers": {
-        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
-        "callback": updatePlayers
     },
     "randomWord": {
         "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && getRole(sg, sl) === "leader" && isfilled(sg.players[sl.pseudo]["game"]),
@@ -423,10 +417,6 @@ export const requests = {
             );
         },
         "callback": secret
-    },
-    "updateHint": {
-        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && isfilled(sg.players[sl.pseudo]["game"]),
-        "callback": updateHint
     },
     "definition": {
         "precheck": (rq, sg, sl) => {
