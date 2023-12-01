@@ -160,8 +160,7 @@ export function joinGame(rq, sg, sl) {
 export function quitGame(rq, sg, sl) {
     const game = sg.players[sl.pseudo]["game"];
     const role = getRole(sg, sl);
-    const res = {"send": {"type": "quitGame", "accepted": true, 
-    "publicGames": selectPublicGames(sg)}};
+    const res = {"send": {"type": "quitGame", "accepted": true}};
     console.log("<", sl.pseudo, "left", game, ">");
 
     // Le joueur quitte la liste des participants
@@ -195,6 +194,9 @@ export function quitGame(rq, sg, sl) {
     
     // Réinitialisation des paramètres du joueur
     sg.players[sl.pseudo]["game"] = "";
+
+    // Parties publiques disponibles
+    res["send"]["publicGames"] = selectPublicGames(sg);
 
     return res;
 }
@@ -413,15 +415,15 @@ export const requests = {
         "callback": quitGame
     },
     "randomWord": {
-        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && getRole(sg, sl) === "leader" && isfilled(sg.players[sl.pseudo]["game"]),
+        // Note: Tester le rôle vérifie en même temps si le joueur est dans une partie
+        "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && getRole(sg, sl) === "leader",
         "callback": randomWord
     },
     "secret": {
         "precheck": (rq, sg, sl) => {
             return (
                 isfilled(rq["word"]) && isfilled(sl.pseudo) 
-                && getRole(sg, sl) === "leader" 
-                && isfilled(sg.players[sl.pseudo]["game"]) 
+                && getRole(sg, sl) === "leader"
                 && sg.games[sg.players[sl.pseudo]["game"]]["secret"] === ""
             );
         },
@@ -430,9 +432,9 @@ export const requests = {
     "definition": {
         "precheck": (rq, sg, sl) => {
             return (
-                isfilled(rq["def"]) && isfilled(rq["word"]) && isfilled(sl.pseudo)
-                && getRole(sg, sl) === "detective" 
-                && isfilled(sg.players[sl.pseudo]["game"])
+                isfilled(rq["def"]) && isfilled(rq["word"]) && isfilled(sl.pseudo) 
+                && getRole(sg, sl) === "detective"
+                // La partie doit avoir commencé et ne pas être terminée
                 && isfilled(sg.games[sg.players[sl.pseudo]["game"]]["secret"])
             );
         },
