@@ -198,9 +198,8 @@ Pour résoudre ce problème un mécanisme de ping/pong est mis en place
 côté serveur. Toutes les 5 minutes, il vérifie la connexion de tous
 les clients en leur envoyant un `ping`. Si dans les 5 minutes
 suivantes il ne reçoit pas un `pong` alors il considère la connexion
-du client concerné comme interrompue. Le délai de 3 minutes avant la suppression
-de la session s'active alors. Le paramètre de l'intervalle du ping/pong
-se configure dans `back/config.js`.
+du client concerné comme interrompue et la session est supprimée.
+Le paramètre de l'intervalle du ping/pong se configure dans `back/config.js`.
 ```js
 export const config = {
     "pingInterval": 5*60*1000,
@@ -248,11 +247,19 @@ git remote set-url --push origin no_push
 git pull
 # Redémarrage du serveur
 sudo systemctl restart nginx
-ps -aux |grep "[n]ode server.js" |awk '{print $2}' |sudo xargs -r kill
+ps -aux |grep "[n]ode server.js" |awk '{print $2}' |xargs -r kill
 nohup node server.js >> logs.out &
 ```
 
 # Développement
+## Exécution des tests automatiques
+Les fonctions de traitement des requêtes côté serveur sont testées
+selon plusieurs scénarios afin de s'assurer du respect des règles du jeu.
+L'exécution de ce programme ne doit rien afficher sinon c'est qu'il y a des erreurs.
+```shell
+node tests/requests-tests.js
+```
+
 ## Changer numéro de version
 Modifier la version du package Node.js côté serveur.
 Crée automatiquement un tag git.
