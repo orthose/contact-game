@@ -114,6 +114,18 @@ unzip ods6.zip
 rm -r __MACOSX/ ods6.zip
 ```
 
+Configuration des permissions
+```shell
+sudo chown -R myuser:www-data /var/www/html/contact-game
+cd /var/www/html/contact-game
+chmod 600 package.json package-lock.json README.md
+chmod 700 tests/ back/ node_modules/
+touch logs.out
+chmod 600 logs.out
+# Les autres fichiers en 644
+# Les autres dossiers en 755
+```
+
 ## Configuration réseau
 Le jeu utilise le protocole [WebSocket](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API)
 pour la communication temps réel entre client et serveur.
@@ -248,7 +260,7 @@ git pull
 # Redémarrage du serveur
 sudo systemctl restart nginx
 ps -aux |grep "[n]ode server.js" |awk '{print $2}' |xargs -r kill
-nohup node server.js >> logs.out &
+nohup node server.js &>> logs.out &
 ```
 
 # Développement
