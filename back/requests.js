@@ -88,20 +88,20 @@ export function restore(rq, sg, sl) {
         // Le joueur peut manquer des définitions, des contacts ou des fins de partie
         if (isfilled(sg.players[sl.pseudo]["game"])) {
             const game = sg.players[sl.pseudo]["game"];
+            const round = sg.games[game]["round"];
             const visibility = sg.games[game]["visibility"];
             const ntry = sg.games[game]["ntry"];
             const letters = sg.games[game]["letters"];
             const secret = sg.games[game]["secret"];
             const hint = secret.slice(0, letters);
             const leader = sg.games[game]["leader"];
-            res.push({"type": "joinGame", "game": game, "visibility": visibility, 
+            res.push({"type": "joinGame", "game": game, "round": round, "visibility": visibility, 
             "ntry": ntry, "secret": hint, "leader": leader, "players": Object.keys(sg.games[game]["players"]),
             // On ne peut pas mettre à jour les définitions ou les contacts car on ne les stocke pas
             // On peut seulement demander au client de supprimer les définitions qui ne sont plus en jeu
             // Le client devra supprimer toutes les définitions sauf celles dans "def" ou marquées .solved
+            // Si le client voit que round a augmenté alors il efface toutes les définitions
             "def": Object.keys(sg.games[game]["def"])});
-            // Pour gérer le changement de partie il faudrait un champ "round" qu'on incrémente à chaque nouvelle manche
-            // Si le client voit que le round a augmenté alors il efface toutes les définitions
             
             // Pas besoin de diffuser le pseudo du joueur car il était déjà dans la partie
             
@@ -129,7 +129,7 @@ export function joinGame(rq, sg, sl) {
         if (!sg.games.hasOwnProperty(game)) {
             console.log("< game", game, "created by", sl.pseudo, ">");
             sg.games[game] = {
-                "visibility": rq["visibility"], "secret": "", "letters": 1, "words": new Set(), 
+                "round": 0, "visibility": rq["visibility"], "secret": "", "letters": 1, "words": new Set(), 
                 "ntry": 5, "ndef": 0, "def": {}, "leader": sl.pseudo, "players": {[sl.pseudo]: new Set()}
             };
         }
@@ -140,12 +140,13 @@ export function joinGame(rq, sg, sl) {
         }
         sg.players[sl.pseudo]["game"] = game;
 
+        const round = sg.games[game]["round"];
         const visibility = sg.games[game]["visibility"];
         const ntry = sg.games[game]["ntry"];
         const secret = sg.games[game]["secret"].slice(0, sg.games[game]["letters"]);
         const leader = sg.games[game]["leader"];
         // Informations de la partie transmises au joueur
-        return {"send": {"type": "joinGame", "game": game, "visibility": visibility, 
+        return {"send": {"type": "joinGame", "game": game, "round": round, "visibility": visibility, 
         "ntry": ntry, "secret": secret, "leader": leader, 
         "players": Object.keys(sg.games[game]["players"]), "accepted": isvalid},
         // Diffusion du nouvel arrivant aux autres joueurs de la partie
@@ -183,10 +184,12 @@ export function quitGame(rq, sg, sl) {
         // Si le joueur est meneur et que le mot secret n'a pas encore été choisi
         // Alors on désigne un nouveau meneur
         if (role === "leader" && sg.games[game]["secret"] === "") {
+            const round = sg.games[game]["round"];
             const visibility = sg.games[game]["visibility"];
             const nextLeader = Object.keys(sg.games[game]["players"])[0];
             sg.games[game]["leader"] = nextLeader;
-            res["broadcast"].push({"type": "joinGame", "game": game, "visibility": visibility, 
+            res["broadcast"].push({"type": "joinGame", "game": game, 
+            "round": round, "visibility": visibility, 
             "ntry": 5, "secret": "", "leader": nextLeader, 
             "players": Object.keys(sg.games[game]["players"])});
         }
@@ -222,11 +225,12 @@ export function secret(rq, sg, sl) {
         // On ne diffuse pas seulement la première lettre 
         // afin de généraliser pour les manches successives
         res["game"] = game;
+        const round = ++sg.games[game]["round"];
         const visibility = sg.games[game]["visibility"];
         const ntry = sg.games[game]["ntry"];
         const hint = sg.games[game]["secret"].slice(0, letters);
         const leader = sg.games[game]["leader"];
-        res["broadcast"] = {"type": "joinGame", "game": game, "visibility": visibility, 
+        res["broadcast"] = {"type": "joinGame", "game": game, "round": round, "visibility": visibility, 
         "ntry": ntry, "secret": hint, "leader": leader, "players": Object.keys(sg.games[game]["players"])};
         // Pas besoin de diffuser le pseudo du meneur car il est déjà dans la partie
     }

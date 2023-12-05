@@ -221,7 +221,7 @@ console.log = function() {};
     // Je crée une partie en tant que meneur avec déjà quelques tours de jeu
     sg.games["Pizza"] =
     {
-        "visibility": "public", "secret": "BONJOUR", "letters": 2, "words": new Set(["BALLON", "BONTE"]), 
+        "round": 1, "visibility": "public", "secret": "BONJOUR", "letters": 2, "words": new Set(["BALLON", "BONTE"]), 
         "ntry": 5, "ndef": 2, "def": {}, "leader": "Maxime", "players": {
             "Maxime": new Set(), "Amélie": new Set([0, 1]), "Quentin": new Set()}
     };
@@ -236,7 +236,7 @@ console.log = function() {};
     rp = request["callback"](rq, sg, sl);
     assert.deepStrictEqual(rp, {"send": [
         {"type": "restore", "pseudo": "Maxime", "accepted": true},
-        {"type": 'joinGame', "game": 'Pizza', "visibility": 'public', "ntry": 5, "secret": 'BO', "leader": 'Maxime',
+        {"type": 'joinGame', "game": 'Pizza', "round": 1, "visibility": 'public', "ntry": 5, "secret": 'BO', "leader": 'Maxime',
         "players": [ 'Maxime', 'Amélie', 'Quentin' ], "def": []},
         {"type": 'secret', "word": 'BONJOUR', "letters": 2}]}
     );
@@ -252,7 +252,7 @@ console.log = function() {};
     rp = request["callback"](rq, sg, sl);
     assert.deepStrictEqual(rp, {"send": [
         {"type": "restore", "pseudo": "Amélie", "accepted": true},
-        {"type": 'joinGame', "game": 'Pizza', "visibility": 'public', "ntry": 5, "secret": 'BO', "leader": 'Maxime',
+        {"type": 'joinGame', "game": 'Pizza', "round": 1, "visibility": 'public', "ntry": 5, "secret": 'BO', "leader": 'Maxime',
         "players": [ 'Maxime', 'Amélie', 'Quentin' ], "def": []}]}
     );
     assert.deepStrictEqual(sg.players["Amélie"], {"ws": 1, "sid": sg.players["Amélie"]["sid"], "closeTimer": null, "game": "Pizza"})
@@ -278,11 +278,11 @@ console.log = function() {};
     // Je crée la partie "Pizza"
     assert(request["precheck"](rq, sg, sl));
     let rp = request["callback"](rq, sg, sl);
-    assert.deepStrictEqual(rp, {"send": {"type": "joinGame", "game": "Pizza", "visibility": "public", 
+    assert.deepStrictEqual(rp, {"send": {"type": "joinGame", "game": "Pizza", "round": 0, "visibility": "public", 
     "ntry": 5, "secret": "", "leader": "Maxime", "players": ["Maxime"], accepted: true}, 
     "broadcast": {"type": 'addPlayer', "pseudo": 'Maxime' }, "game": 'Pizza'});
     assert.deepStrictEqual(sg.games, {"Pizza": {
-        "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
+        "round": 0, "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
         "ntry": 5, "ndef": 0, "def": {}, "leader": "Maxime", "players": {"Maxime": new Set()}}
     });
     assert(sg.players["Maxime"]["game"] === "Pizza");
@@ -298,11 +298,11 @@ console.log = function() {};
     assert(sg.players.hasOwnProperty("Amélie"));
     assert(request["precheck"](rq, sg, sl));
     rp = request["callback"](rq, sg, sl2);
-    assert.deepStrictEqual(rp, {"send": {"type": "joinGame", "game": "Pizza", "visibility": "public", 
+    assert.deepStrictEqual(rp, {"send": {"type": "joinGame", "game": "Pizza", "round": 0, "visibility": "public", 
     "ntry": 5, "secret": "", "leader": "Maxime", "players": ["Maxime", "Amélie"], accepted: true}, 
     "broadcast": {"type": 'addPlayer', "pseudo": 'Amélie'}, "game": 'Pizza'});
     assert.deepStrictEqual(sg.games, {"Pizza": {
-        "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
+        "round": 0, "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
         "ntry": 5, "ndef": 0, "def": {}, "leader": "Maxime", "players": {"Maxime": new Set(), "Amélie": new Set()}}
     });
     assert(sg.players["Amélie"]["game"] === "Pizza");
@@ -330,7 +330,7 @@ console.log = function() {};
     assert(joinGame["precheck"](rq3, sg, sl));
     joinGame["callback"](rq3, sg, sl);
     assert.deepStrictEqual(sg.games, {"Pizza": {
-        "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
+        "round": 0, "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
         "ntry": 5, "ndef": 0, "def": {}, "leader": "Maxime", "players": {"Maxime": new Set()}}
     });
     // Le joueur "Amélie" rejoint la partie "Pizza"
@@ -342,7 +342,7 @@ console.log = function() {};
     assert(joinGame["precheck"](rq3, sg, sl));
     joinGame["callback"](rq3, sg, sl2);
     assert.deepStrictEqual(sg.games, {"Pizza": {
-        "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
+        "round": 0, "visibility": "public", "secret": "", "letters": 1, "words": new Set(), 
         "ntry": 5, "ndef": 0, "def": {}, "leader": "Maxime", "players": {"Maxime": new Set(), "Amélie": new Set()}}
     });
     // Le meneur "Maxime" quitte la partie
@@ -351,7 +351,7 @@ console.log = function() {};
     assert.deepStrictEqual(rp, {"send": {"type": 'quitGame', "accepted": true, "publicGames": [{"game": 'Pizza', "players": 1}]},
         "game": 'Pizza',
         "broadcast": [{"type": 'removePlayer', "pseudo": 'Maxime' },
-        {"type": 'joinGame', "game": 'Pizza', "visibility": 'public', "ntry": 5, "secret": '', "leader": 'Amélie', "players": ['Amélie']}]
+        {"type": 'joinGame', "game": 'Pizza', "round": 0, "visibility": 'public', "ntry": 5, "secret": '', "leader": 'Amélie', "players": ['Amélie']}]
     });
     assert(sg.players["Maxime"]["game"] === "");
     assert(sg.games["Pizza"]["leader"] === "Amélie");
@@ -444,7 +444,7 @@ console.log = function() {};
     assert(request["precheck"](rq, sg, sl));
     let rp = request["callback"](rq, sg, sl);
     assert.deepStrictEqual(rp, {"send": {"type": 'secret', "word": 'BONJOUR', "letters": 1, "accepted": true},
-        "game": 'Pizza', "broadcast": {"type": 'joinGame', "game": 'Pizza', "visibility": 'public', "ntry": 5, "secret": 'B', "leader": 'Maxime', "players": [ 'Maxime' ]}
+        "game": 'Pizza', "broadcast": {"type": 'joinGame', "game": 'Pizza', "round": 1, "visibility": 'public', "ntry": 5, "secret": 'B', "leader": 'Maxime', "players": [ 'Maxime' ]}
     });
     assert(sg.games["Pizza"]["secret"] === "BONJOUR");
     // Je ne peux plus modifier le mot secret

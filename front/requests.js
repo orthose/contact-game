@@ -48,6 +48,8 @@ const requests = {
         // Pas de champ accepted si changement de meneur ou après restauration de session
         if (!rq.hasOwnProperty("accepted") || rq["accepted"]) {
             game = rq["game"];
+            const previousRound = round;
+            round = rq["round"];
             leader = rq["leader"];
             players = new Set(rq["players"]);
             role = leader === pseudo ? "leader" : "detective";
@@ -67,21 +69,26 @@ const requests = {
             // Affichage des joueurs
             pages.listPlayers();
 
-            // Suppression des définitions en cas de restauration de session
-            // On supprime toutes les définitions sauf celles dans "def" ou marquées .solved
-            if (rq.hasOwnProperty("def")) {
+            // Formulaire de choix du mot secret
+            if (rq["secret"] === "" && role === "leader") { pages.chooseSecret(); }
+
+            // Attente de la première manche en tant que détective
+            else if (round === 0) {
+                document.querySelector("main").innerHTML = "<p style='font-size:16px'>Veuillez patienter le temps que le meneur choisisse le mot mystère.</p>";
+            }
+
+            // Démarrage du jeu si on passe à la manche suivante
+            else if (previousRound < round) { pages.playGame(); }
+
+            // Restauration de session au cours d'une même manche
+            else if (previousRound === round && rq.hasOwnProperty("def")) {
+                // On supprime toutes les définitions sauf celles dans "def" ou marquées .solved
                 document.querySelectorAll("div.definition").forEach((div) => {
                     if (!div.classList.contains("solved") && !rq["def"].includes(div.id)) {
                         div.remove();
                     }
                 });
             }
-
-            // Formulaire de choix du mot secret
-            if (rq["secret"] === "" && role === "leader") { pages.chooseSecret(); }
-
-            // Démarrage du jeu
-            else if (!rq.hasOwnProperty("def")) { pages.playGame(); }
 
         } else {
             pages.invalidInput(document.getElementById("game_input"));
@@ -90,7 +97,7 @@ const requests = {
 
     // Quitter la partie
     quitGame: function(rq) {
-        game = ""; role = ""; players = new Set(); leader = ""; secret = "";
+        game = ""; round = 0; role = ""; players = new Set(); leader = ""; secret = "";
         // Nettoyer les balises d'information du header
         pages.quitGame();
         // Retour à la page de choix de partie
