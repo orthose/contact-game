@@ -121,6 +121,8 @@ const requests = {
 
     // Supprimer un joueur
     removePlayer: function(rq) {
+        // Si le joueur est meneur lors la partie n'a plus de meneur
+        if (leader === rq["pseudo"]) { leader = ""; }
         players.delete(rq["pseudo"]);
         pages.listPlayers();
     },
