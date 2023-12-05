@@ -224,9 +224,11 @@ div#game {
 
 #secret_input + button {
     display: inline-block;
-    padding-top: 18px;
-    padding-bottom: 17px;
-    margin-left: 0px;
+    vertical-align: top;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 35px;
+    margin: 0px 0px;
 }
 
 div#secret > span {
@@ -275,6 +277,7 @@ div.definition input {
 
 div.definition button {
     display: inline-block;
+    vertical-align: top;
     padding: 0px 5px;
     height: 35px;
 }
