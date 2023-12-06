@@ -1,6 +1,6 @@
 {
   "name": "contact-game",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "« Contact » est un jeu de mots convivial multi-joueurs dont les règles sont très simples.",
   "main": "server.js",
   "scripts": {
