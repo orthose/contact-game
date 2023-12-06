@@ -285,13 +285,32 @@ div.definition button {
 div.definition span {
     display: inline-block;
     vertical-align: middle;
-    max-width: calc(50% - 45px);
+    white-space: nowrap;
     overflow: hidden;
     overflow-x: scroll;
     background-color: darkblue;
     color: white;
     font-size: large;
     padding: 0px 5px;
+}
+
+.definition .players span {
+    max-width: calc(50% - 45px);
+}
+
+.definition .words > div {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: calc(100% - 50px);
+}
+
+.definition .words span {
+    max-width: 100%;
+}
+
+.definition span.word2 img {
+    vertical-align: baseline;
+    margin-right: 5px; 
 }
 
 div.definition span.success {
@@ -303,7 +322,16 @@ div.definition span.fail {
 }
 
 div.definition.solved {
-    background-color: rgba(175,238,238,0.3);
+    border: none;
+    border-radius: 15px;
+}
+
+div.definition.success {
+    background-color: rgba(0, 255, 0, 0.3);
+}
+
+div.definition.fail {
+    background-color: rgba(255, 0, 0, 0.3);
 }
 
 div.definition p.definition {
@@ -332,7 +360,7 @@ div#end_game span {
 }
 
 p.error {
-    background-color: rgba(148,0,211,0.7);
+    background-color: rgba(255,0,0,0.7);
     text-align: left;
     font-size: 16px;
     color: white;

@@ -185,29 +185,25 @@ const requests = {
     contact: function(rq) {
         const div = document.querySelector(`#definition div[id="${rq["ndef"]}"]`);
         pages.printLifes(rq["ntry"]);
-        // Contre du meneur
         let spanWord = null;
+        div.querySelector("div.words").style = "display:block";
+        // Contre du meneur
         if (rq["pseudo"] === leader) {
-            const divLeader = div.querySelector("div.leader");
-            divLeader.style = "display: block";
-            divLeader.querySelector("span").textContent = rq["word2"];
-            spanWord = divLeader.querySelector("span");
+            spanWord = div.querySelector("span.word2")
         }
         // Contact réussi 
         else {
             div.querySelector("span.searcher").textContent = rq["pseudo"];
-            div.querySelector("div.words").style = "display: block";
             if (!rq["accepted"]) {
                 const span = div.querySelector("span.word1");
                 span.textContent = rq["word1"];
-                span.style = "display: inline-block";
+                span.style = "display:inline-block";
             }
-            spanWord = div.querySelector("span.word2");
+            spanWord = div.querySelector("span.word3")
         }
-        Object.assign(spanWord, {
-            textContent: rq["word2"],
-            className: rq["accepted"] ? "success" : "fail",
-        });
+        spanWord.innerHTML += rq["word2"];
+        spanWord.classList.add(rq["accepted"] ? "success" : "fail");
+        spanWord.style = "display:inline-block";
         // Suppression des définitions expirées
         rq["expired"].forEach((n) => {
             removeElement(document.getElementById(n));
@@ -215,9 +211,26 @@ const requests = {
         // La défintion est consommée
         if (!(rq["pseudo"] === leader && !rq["accepted"])) {
             div.classList.add("solved");
+            if (
+                // Je suis meneur et les détectives ont raté leur contact
+                (role === "leader" && rq["pseudo"] !== leader && !rq["accepted"])
+                // Je suis meneur et j'ai réussi mon contre
+                || (role === "leader" && rq["pseudo"] === leader && rq["accepted"])
+                // Je suis détective et on a réussi notre contact
+                || (role === "detective" && rq["pseudo"] !== leader && rq["accepted"])
+            ) {
+                div.classList.add("success");
+            }
+            // Je suis meneur et les détectives ont réussi leur contact
+            // Je suis détective et le meneur a réussi son contact
+            // Je suis détective et on raté notre contact
+            else {
+                div.classList.add("fail");
+            }
             removeElement(div.querySelector("input"));
             removeElement(div.querySelector("button"));
         }
+        // Le meneur ne peut contrer qu'une seule fois une définition
         if (role === "leader" && rq["pseudo"] === leader && !rq["accepted"]) {
             removeElement(div.querySelector("input"));
             removeElement(div.querySelector("button"));

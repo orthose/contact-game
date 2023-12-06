@@ -215,14 +215,11 @@ const pages = {
             <span class="author">${rq["pseudo"]}</span>
             <span class="searcher"></span>
         </div>
-        <div class="words" style="display: none;">
+        <div class="words" style="display:none">
             <img src="./assets/img/lock.png" width="32px" height="32px">
-            <span class="word1" style="display: none"></span>
-            <span class="word2"></span>
-        </div>
-        <div class="leader" style="display: none;">
-            <img src="./assets/img/star.png" width="32px" height="32px">
-            <span></span>
+            <div><span class="word1" style="display:none"></span>
+            <span class="word2" style="display:none"><img src="./assets/img/star-white.png" width="16px" height="16px"></span>
+            <span class="word3" style="display:none"></span></div>
         </div>
         <p class="definition">${rq["def"]}</p>`
         if (rq["pseudo"] !== pseudo) {
