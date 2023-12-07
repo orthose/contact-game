@@ -62,7 +62,7 @@ export function register(rq, sg, sl) {
 // Déconnecter le joueur courant
 export function unregister(rq, sg, sl) {
     // Suppression immédiate du joueur sans délai
-    sl.ws.closeTimeout = 0; sl.ws.close(); return {};
+    sl.ws.closeTimeout = 0; sl.ws.terminate(); return {};
 }
 
 // Restaurer la session (pseudo, sid) dans le délai imparti
@@ -387,12 +387,17 @@ export function onclose(sg, sl) {
     
     // Suppression du joueur
     delete sg.players[sl.pseudo];
+    sl.pseudo = "";
 
     return res;
 }
 
 // Association type de requête <-> fonction
 // Si precheck est fausse alors callback n'est pas appelée
+// Note: Tester le rôle vérifie en même temps si le joueur est dans une partie
+// Invariant: Si isfilled(sl.pseudo) alors sg.players.hasOwnProperty(sl.pseudo)
+// Invariant: Si isfilled(sg.players[sl.pseudo]["game"]) alors sg.games.hasOwnProperty(sg.players[sl.pseudo]["game"])
+// && sg.games[sg.players[sl.pseudo]["game"]]["players"].hasOwnProperty(sl.pseudo)
 export const requests = {
     "status": {
         "precheck": (rq, sg, sl) => true,
@@ -419,7 +424,6 @@ export const requests = {
         "callback": quitGame
     },
     "randomWord": {
-        // Note: Tester le rôle vérifie en même temps si le joueur est dans une partie
         "precheck": (rq, sg, sl) => isfilled(sl.pseudo) && getRole(sg, sl) === "leader",
         "callback": randomWord
     },

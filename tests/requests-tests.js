@@ -161,7 +161,7 @@ console.log = function() {};
     // Le champ "closeTimeout" permet une suppression immédiate
     ws["closeTimeout"] = 0;
     // L'objet sl est ensuite détruit dans la pratique du fait de sa portée locale
-    assert.deepStrictEqual(sl, {pseudo: "Maxime", ws: ws});
+    assert.deepStrictEqual(sl, {pseudo: "", ws: ws});
 }
 
 // Restauration de session

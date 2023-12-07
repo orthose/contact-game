@@ -100,7 +100,7 @@ wss.on("connection", function(ws) {
 const pingTimer = setInterval(function() {
     wss.clients.forEach(function(ws) {
         if (!ws.isAlive) {
-            ws.closeTimeout = 0; ws.close(); return;
+            ws.closeTimeout = 0; ws.terminate(); return;
         }
         ws.isAlive = false; ws.ping();
     });
