@@ -81,7 +81,10 @@ wss.on("connection", function(ws) {
 
     // Déconnexion du joueur
     ws.onclose = function() {
-        if (sl.pseudo) {
+        // Le joueur doit être enregistré avec un pseudo
+        // La connexion ne doit pas être une connexion fantôme
+        // Sinon cela signifie que le joueur a restauré sa session
+        if (sl.pseudo && ws === sg.players[sl.pseudo]["ws"]) {
             sg.players[sl.pseudo]["closeTimer"] = setTimeout(() => {
                 const game = sg.players[sl.pseudo]["game"];
                 const rp = onclose(sg, sl);
