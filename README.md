@@ -119,7 +119,7 @@ Configuration des permissions
 sudo chown -R myuser:www-data /var/www/html/contact-game
 cd /var/www/html/contact-game
 chmod 600 package.json package-lock.json README.md
-chmod 700 tests/ back/ node_modules/
+chmod 700 .git tests/ back/ node_modules/
 touch logs.out
 chmod 600 logs.out
 # Les autres fichiers en 644
@@ -229,14 +229,14 @@ node server.js
 Pour lancer le serveur en production. Les logs sont redirigés dans le fichier `logs.out`.
 ```shell
 # Pour arrêter kill [pid]
-nohup node server.js >> logs.out &
+nohup node server.js &>> logs.out &
 ```
 
 Pour relancer le serveur à chaque redémarrage de la machine.
 ```shell
 crontab -e
 # contact-game
-@reboot cd /var/www/html/contact-game; nohup node server.js >> logs.out &
+@reboot cd /var/www/html/contact-game; nohup node server.js &>> logs.out &
 ```
 
 Pour vérifier que le flux est bien ouvert sur le port **8080** depuis une autre machine.
@@ -247,6 +247,38 @@ telnet my.domain.org 8080
 
 Pour accéder au jeu il suffit d'héberger les fichiers sur un serveur Apache ou NGINX
 et de requêter le fichier `index.html`. Le jeu ne peut fonctionner que dans un navigateur moderne.
+
+## Gestionnaire de processus pm2
+Le gestionnaire de processus pm2 permet de simplifier le monitoring du serveur et de le faire
+redémarrer automatiquement en cas d'erreur et lors du reboot.
+Il consomme un peu plus de mémoire que la solution avec `nohup` et `crontab`.
+Si vous choisissez de l'utiliser désactivez la solution précédente.
+
+```shell
+# Installer pm2 de manière globale
+sudo npm install pm2@latest -g
+# Démarrer le serveur
+cd /var/www/html/contact-game
+pm2 start server.js
+# Arrêter le serveur
+pm2 stop server
+# Redémarrer le serveur
+pm2 restart server
+# Démarrage automatique lors du reboot
+pm2 startup systemd
+pm2 save # Vérifier avant que le processus est online
+systemctl status pm2-myuser
+# Supprimer le démarrage automatique
+pm2 unstartup systemd
+# Liste des processus
+pm2 list
+# Informations du processus
+pm2 info server
+# Logs du serveur ~/.pm2/logs
+pm2 logs server
+# Monitoring en direct
+pm2 monit
+```
 
 ## Mise à jour
 Les mises à jour du logiciel peuvent se faire avec git.
