@@ -222,7 +222,16 @@ div#game {
     width: calc(100% - 35px);
 }
 
-#secret_input + button {
+#word_input {
+    width: calc(100% - 36px);
+}
+
+button#send_def {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#secret_input + button, #word_input + button#send_def {
     display: inline-block;
     vertical-align: top;
     padding-top: 0px;

@@ -137,20 +137,24 @@ const pages = {
         quit.onclick = callbacks.quitGame;
         const main = document.querySelector("main");
         main.innerHTML = "";
-        main.appendChild(createElement("div", {id: "definition"}));
         if (role === "detective") {
             main.appendChild(createElement("input", {
                 type: "text", id: "word_input", placeholder: config["exampleWord"],
+            }));
+            const onmouseover = (ev) => { ev.target.src = "./assets/img/arrow-right-aqua.svg"; };
+            const onmouseout = (ev) => { ev.target.src = "./assets/img/arrow-right-white.svg"; };
+            main.appendChild(createElement("button", {
+                id: "send_def", innerHTML: "<img src='./assets/img/arrow-right-white.svg' width='35px' height='35px'>",
+                onclick: callbacks.definition,
+                onmouseover: onmouseover, onmouseout: onmouseout,
+                onmousedown: onmouseover, onmouseup: onmouseout, 
             }));
             main.appendChild(createElement("textarea", {
                 id: "def_input", placeholder: 
                 config["exampleDef"],
             }));
-            main.appendChild(createElement("button", {
-                id: "send_def", textContent: "Envoyer",
-                onclick: callbacks.definition,
-            }));
         }
+        main.appendChild(createElement("div", {id: "definition"}));
     },
 
     nextRound: function() {
@@ -226,6 +230,6 @@ const pages = {
             div.innerHTML += `<input type="text" class="word_input" placeholder="${secret}">
             <button onclick="callbacks.contact(${rq["ndef"]})">${role === "leader" ? "Contre" : "Contact"}</button>`;
         }
-        document.getElementById("definition").appendChild(div);
+        document.getElementById("definition").prepend(div);
     },
 };
