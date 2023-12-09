@@ -350,6 +350,7 @@ div.definition p.definition {
 div#end_game {
     border-radius: 15px;
     padding: 10px 20px;
+    margin-bottom: 10px;
 }
 
 div#end_game.winner {

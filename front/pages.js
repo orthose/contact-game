@@ -147,7 +147,7 @@ const pages = {
                 id: "send_def", innerHTML: "<img src='./assets/img/arrow-right-white.svg' width='35px' height='35px'>",
                 onclick: callbacks.definition,
                 onmouseover: onmouseover, onmouseout: onmouseout,
-                onmousedown: onmouseover, onmouseup: onmouseout, 
+                onmousedown: onmouseover, onmouseup: onmouseout,
             }));
             main.appendChild(createElement("textarea", {
                 id: "def_input", placeholder: 
@@ -155,14 +155,6 @@ const pages = {
             }));
         }
         main.appendChild(createElement("div", {id: "definition"}));
-    },
-
-    nextRound: function() {
-        const main = document.querySelector("main");
-        main.appendChild(createElement("button", {
-            textContent: "Continuer",
-            onclick: () => { pages.chooseSecret(); },
-        }));
     },
 
     endGame: function(winner) {
@@ -181,7 +173,7 @@ const pages = {
         pages.printScore();
         const div = createElement("div", {id: "end_game", className: className});
         div.innerHTML = `<img src="${src}"><span>${msg}</span>`;
-        document.querySelector("main").appendChild(div);
+        document.querySelector("main").prepend(div);
         // Suppression des champs d'envoi de définition
         removeElement(document.getElementById("word_input"));
         removeElement(document.getElementById("def_input"));
@@ -190,6 +182,14 @@ const pages = {
         document.querySelectorAll("div.definition").forEach((div) => {
             if (!div.classList.contains("solved")) { div.remove(); }
         });
+    },
+
+    nextRound: function() {
+        const div = document.getElementById("end_game");
+        div.after(createElement("button", {
+            textContent: "Continuer",
+            onclick: () => { pages.chooseSecret(); },
+        }));
     },
 
     listPlayers: function() {

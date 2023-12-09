@@ -272,6 +272,7 @@ systemctl status pm2-myuser
 pm2 unstartup systemd
 # Liste des processus
 pm2 list
+pm2 status
 # Informations du processus
 pm2 info server
 # Logs du serveur ~/.pm2/logs
